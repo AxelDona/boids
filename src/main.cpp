@@ -3,6 +3,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 
+class boid{
+
+};
+
 int main(int argc, char* argv[])
 {
     { // Run the tests
@@ -16,17 +20,20 @@ int main(int argc, char* argv[])
 
     // Actual app
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
-    float                  speedFactor  = 0.005;
+    float                   speedFactor  = 0.002;
+    float                   deviateValue = 0.04;
+    int                     directionChangeChance = 1;
 
     // Set triangle positions
     std::vector<glm::vec2> baseCenter(100);
-    float                  base   = 0.1;
-    float                  height = 0.2;
+    float                  base   = 0.05;
+    float                  height = 0.06;
+    float                  secureArea = base * height * 2;
     glm::vec2              leftPoint(0, base/2);
     glm::vec2              rightPoint(-leftPoint);
     glm::vec2              topPoint(height, 0);
     for (unsigned int i = 0; i <= 100; i++) {
-        baseCenter[i] = glm::vec2(p6::random::number(-ctx.aspect_ratio() + base / 2, ctx.aspect_ratio() - base / 2), p6::random::number(-1, 1));
+        baseCenter[i] = glm::vec2(p6::random::number(-ctx.aspect_ratio() + secureArea, ctx.aspect_ratio() - secureArea), p6::random::number(-1 + secureArea, 1 - secureArea));
     }
 
     // Set triangle centers
@@ -44,10 +51,12 @@ int main(int argc, char* argv[])
     // Declare your infinite update loop.
     ctx.update = [&]() {
         ctx.use_stroke = false;
-        ctx.fill = {0.2f, 0.1f, 0.3f, 0.3f};
+        ctx.fill = {0.15f, 0.15f, 0.2f, 0.15f};
         ctx.rectangle(p6::FullScreen{});
 
-        ctx.fill = {0.5f, 0.3f, 0.7f};
+        ctx.use_stroke = true;
+        ctx.stroke_weight = 0.005f;
+        ctx.stroke = {1.0f, 0.15f, 0.3f};
 
         for (unsigned int i = 0; i <= 100; i++) {
             ctx.triangle(
@@ -59,6 +68,11 @@ int main(int argc, char* argv[])
             );
             // Move triangle
             centerValue[i] += directionValue[i] * speedFactor;
+            // Check if direction should be randomly changed (probability is 1/directionChangeChance)
+            if (p6::random::integer(directionChangeChance) == 0){
+                // Slightly modify direction
+                directionValue[i] = glm::normalize(directionValue[i] += glm::vec2(p6::random::number(-deviateValue, deviateValue), p6::random::number(-deviateValue, deviateValue)));
+            }
         }
     };
 
