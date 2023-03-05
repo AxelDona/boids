@@ -16,32 +16,49 @@ int main(int argc, char* argv[])
 
     // Actual app
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
+    float                  speedFactor  = 0.005;
 
-    // Set square values
+    // Set triangle positions
     std::vector<glm::vec2> baseCenter(100);
     float                  base   = 0.1;
     float                  height = 0.2;
-    glm::vec2              rightPoint(base / 2, 0.0);
-    glm::vec2              leftPoint(-rightPoint);
-    glm::vec2              topPoint(0, height);
-    std::vector<p6::Angle> rotationValue(100);
+    glm::vec2              leftPoint(0, base/2);
+    glm::vec2              rightPoint(-leftPoint);
+    glm::vec2              topPoint(height, 0);
     for (unsigned int i = 0; i <= 100; i++) {
         baseCenter[i] = glm::vec2(p6::random::number(-ctx.aspect_ratio() + base / 2, ctx.aspect_ratio() - base / 2), p6::random::number(-1, 1));
     }
 
+    // Set triangle centers
+    std::vector<glm::vec2> centerValue(100);
     for (unsigned int i = 0; i <= 100; i++) {
-        rotationValue[i] = p6::random::angle();
+        centerValue[i] = baseCenter[i];
+    }
+
+    // Set triangle directions
+    std::vector<glm::vec2> directionValue(100);
+    for (unsigned int i = 0; i <= 100; i++) {
+        directionValue[i] = p6::random::direction();
     }
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::Blue);
+        ctx.use_stroke = false;
+        ctx.fill = {0.2f, 0.1f, 0.3f, 0.3f};
+        ctx.rectangle(p6::FullScreen{});
+
+        ctx.fill = {0.5f, 0.3f, 0.7f};
+
         for (unsigned int i = 0; i <= 100; i++) {
             ctx.triangle(
-                baseCenter[i] + leftPoint,
-                baseCenter[i] + rightPoint,
-                baseCenter[i] + topPoint
+                leftPoint,
+                rightPoint,
+                topPoint,
+                centerValue[i],
+                p6::Angle(directionValue[i])
             );
+            // Move triangle
+            centerValue[i] += directionValue[i] * speedFactor;
         }
     };
 
