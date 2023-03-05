@@ -73,6 +73,19 @@ int main(int argc, char* argv[])
                 // Slightly modify direction
                 directionValue[i] = glm::normalize(directionValue[i] += glm::vec2(p6::random::number(-deviateValue, deviateValue), p6::random::number(-deviateValue, deviateValue)));
             }
+            // Check if within window limits and teleport
+            if (centerValue[i][0] < -ctx.aspect_ratio()){
+                centerValue[i][0] = ctx.aspect_ratio();
+            }
+            if (centerValue[i][0] > ctx.aspect_ratio()){
+                centerValue[i][0] = - ctx.aspect_ratio();
+            }
+            if (centerValue[i][1] > 1){
+                centerValue[i][1] = - 1;
+            }
+            if (centerValue[i][1] < - 1){
+                centerValue[i][1] = 1;
+            }
         }
     };
 
