@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdlib>
 #include "p6/p6.h"
 #ifndef SIMPLE_P6_SETUP_BOIDS_H
