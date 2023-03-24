@@ -8,49 +8,49 @@ class boid{
 
 private :
 
-    float                   m_speedFactor;
-    float                   m_baseWidth;
-    float                   m_height;
-    float                   m_secureArea = m_baseWidth * m_height * 2;
-    float                   m_xSpeed;
-    float                   m_ySpeed;
-    float                   m_xAcceleration{};
-    float                   m_yAcceleration{};
-    float                   m_xToTarget{};
-    float                   m_yToTarget{};
-    float                   m_inertiaFactor = 50;
-    float                   m_deviateValue = 0.005;
+    unsigned int            m_id;
+
     glm::vec2               m_center     = {0, 0};
     glm::vec2               m_leftPoint{};
     glm::vec2               m_rightPoint{};
     glm::vec2               m_topPoint{};
-    glm::vec2               m_targetDirection{};
-    float                   m_targetXSpeed = m_xSpeed;
-    float                   m_targetYSpeed = m_ySpeed;
+
+    float                   m_baseWidth;
+    float                   m_height;
+    float                   m_secureArea = m_baseWidth * m_height * 2;
+
+    glm::vec2               m_speed;
+    glm::vec2               m_targetSpeed{};
+    glm::vec2               m_toTarget{};
+    float                   m_acceleration{};
+    float                   m_speedFactor;
+    float                   m_inertiaFactor = 50;
+    float                   m_deviateValue = 0.005;
+
+    p6::Color               m_color;
+
     float                   m_detectionRadius;
     std::vector<boid>       m_neighbors;
-    p6::Color               m_color;
-    unsigned int            m_id;
 
 public:
 
     // ---------- CONSTRUCTORS
 
     // Random position boid constructor
-    boid(float speed, float deviateValue, float base, float height, float detectionRadius, unsigned int boidId, p6::Context& context): m_speedFactor(speed), m_baseWidth(base), m_height(height), m_xSpeed(p6::random::number(-1,1)), m_ySpeed(p6::random::number(-1, 1)), m_deviateValue(deviateValue), m_detectionRadius(detectionRadius), m_id(boidId){
+    boid(float speedFactor, float deviateValue, float base, float height, float detectionRadius, unsigned int boidId, p6::Context& context): m_id(boidId), m_baseWidth(base), m_height(height), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(speedFactor), m_deviateValue(deviateValue), m_detectionRadius(detectionRadius){
         m_center    = glm::vec2(p6::random::number(-context.aspect_ratio() + m_secureArea, context.aspect_ratio() - m_secureArea), p6::random::number(-1 + m_secureArea, 1 - m_secureArea));
         setTriangleVertices();
     }
 
     // Defined position boid constructor
-    boid(glm::vec2 center, float speed, float deviateValue, float base, float height, float detectionRadius, unsigned int boidId): m_speedFactor(speed), m_baseWidth(base), m_height(height), m_xSpeed(p6::random::number(-1,1)), m_ySpeed(p6::random::number(-1, 1)), m_deviateValue(deviateValue), m_center(center), m_detectionRadius(detectionRadius), m_id(boidId){
+    boid(glm::vec2 center, float speedFactor, float deviateValue, float base, float height, float detectionRadius, unsigned int boidId): m_id(boidId), m_center(center), m_baseWidth(base), m_height(height), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(speedFactor), m_deviateValue(deviateValue), m_detectionRadius(detectionRadius){
         setTriangleVertices();
     }
 
     // ---------- METHODS
 
     // Check if there are neighbor boids around and store them in an array
-    void checkNeighbors(std::vector<boid> boids);
+    void checkNeighbors(const std::vector<boid>& boids);
 
     // Get the general direction of the group of neighbors
     void getGroupDirection();

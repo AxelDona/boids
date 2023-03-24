@@ -3,10 +3,10 @@
 // ---------- METHODS
 
 // Check if there are neighbor boids around and store them in an array
-void boid::checkNeighbors(std::vector<boid> boids){
-    for (size_t i = 0; i < boids.size(); i++){
-        if (glm::distance(m_center, boids[i].m_center) <= m_detectionRadius*2 && m_id != boids[i].m_id){
-            m_neighbors.push_back(boids[i]);
+void boid::checkNeighbors(const std::vector<boid>& boids){
+    for (const auto & boid : boids){
+        if (glm::distance(m_center, boid.m_center) <= m_detectionRadius*2 && m_id != boid.m_id){
+            m_neighbors.push_back(boid);
         }
     }
     if (!m_neighbors.empty()){
@@ -18,17 +18,15 @@ void boid::checkNeighbors(std::vector<boid> boids){
 
 // Get the general direction of the group of neighbors
 void boid::getGroupDirection(){
-    m_targetXSpeed = m_xSpeed;
-    m_targetYSpeed = m_ySpeed;
+    m_targetSpeed = m_speed;
     if (m_neighbors.empty()){
         return;
     }
-    for (size_t i = 0; i < m_neighbors.size(); i++){
-        m_targetXSpeed += m_neighbors[i].m_xSpeed;
-        m_targetYSpeed += m_neighbors[i].m_ySpeed;
+    for (auto & m_neighbor : m_neighbors){
+        m_targetSpeed += m_neighbor.m_speed;
     }
-    m_targetXSpeed = m_targetXSpeed / static_cast<float>(m_neighbors.size() + 1);
-    m_targetYSpeed = m_targetYSpeed / static_cast<float>(m_neighbors.size() + 1);
+    m_targetSpeed.x = m_targetSpeed.x / static_cast<float>(m_neighbors.size() + 1);
+    m_targetSpeed.y = m_targetSpeed.y / static_cast<float>(m_neighbors.size() + 1);
 }
 
 // Create vertices of the triangle
@@ -73,11 +71,9 @@ void boid::drawDetectionCircle(p6::Context& ctx){
 
 // Move the boid according to its parameters
 void boid::boidMovement(){
-    m_xToTarget = m_targetXSpeed - m_xSpeed;
-    m_yToTarget = m_targetYSpeed - m_ySpeed;
-    m_xSpeed += (m_xToTarget / m_inertiaFactor) + p6::random::number(-m_deviateValue, m_deviateValue);
-    m_ySpeed += (m_yToTarget / m_inertiaFactor) + p6::random::number(-m_deviateValue, m_deviateValue);
-    m_center += glm::normalize(glm::vec2(m_xSpeed, m_ySpeed)) * m_speedFactor;
+    m_toTarget = m_targetSpeed - m_speed;
+    m_speed += (m_toTarget / m_inertiaFactor) + p6::random::number(-m_deviateValue, m_deviateValue);
+    m_center += glm::normalize(m_speed) * m_speedFactor;
 }
 
 // Draw a boid
@@ -93,7 +89,7 @@ void boid::draw(p6::Context& ctx, bool displayCircles, bool displayID){
         m_rightPoint,
         m_topPoint,
         m_center,
-        p6::Angle(glm::normalize(glm::vec2(m_xSpeed, m_ySpeed)))
+        p6::Angle(glm::normalize(m_speed))
     );
 
     // Draw detection circle
@@ -134,8 +130,8 @@ std::u16string to_u16string(unsigned int const &value) {
 }
 
 void addBoid(std::vector<boid>& boids, glm::vec2 startPos, float speedFactor, float deviateValue, float baseWidth, float height, float detectionRadius){
-    boid oneboid(startPos, speedFactor, deviateValue, baseWidth, height, detectionRadius, boids.size());
-    boids.push_back(oneboid);
+    boid singularBoid(startPos, speedFactor, deviateValue, baseWidth, height, detectionRadius, boids.size());
+    boids.push_back(singularBoid);
 }
 
 void displayBoidsNumber(std::vector<boid>& boids, p6::Context& context){
