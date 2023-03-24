@@ -39,17 +39,22 @@ private :
 
 public:
 
+    // ---------- CONSTRUCTORS
+
     // Random position boid constructor
     boid(float speed, float deviateValue, float base, float height, float detectionRadius, unsigned int boidId, p6::Context& context): m_speedFactor(speed), m_deviateValue(deviateValue), m_baseWidth(base), m_height(height), m_xSpeed(p6::random::number(-1,1)), m_ySpeed(p6::random::number(-1, 1)), m_detectionRadius(detectionRadius), m_id(boidId){
         m_center    = glm::vec2(p6::random::number(-context.aspect_ratio() + m_secureArea, context.aspect_ratio() - m_secureArea), p6::random::number(-1 + m_secureArea, 1 - m_secureArea));
-        setTriangleVertexes();
+        setTriangleVertices();
     }
 
     // Defined position boid constructor
     boid(glm::vec2 center, float speed, float deviateValue, float base, float height, float detectionRadius, unsigned int boidId, p6::Context& context): m_center(center), m_speedFactor(speed), m_deviateValue(deviateValue), m_baseWidth(base), m_height(height), m_xSpeed(p6::random::number(-1,1)), m_ySpeed(p6::random::number(-1, 1)), m_detectionRadius(detectionRadius), m_id(boidId){
-        setTriangleVertexes();
+        setTriangleVertices();
     }
 
+    // ---------- METHODS
+
+    // Check if there are neighbor boids around and store them in an array
     void checkNeighbors(std::vector<boid> boids){
         for (size_t i = 0; i < boids.size(); i++){
             if (glm::distance(m_center, boids[i].m_center) <= m_detectionRadius*2 && m_id != boids[i].m_id){
@@ -63,6 +68,7 @@ public:
         }
     }
 
+    // Get the general direction of the group of neighbors
     void getGroupDirection(){
         m_targetXSpeed = m_xSpeed;
         m_targetYSpeed = m_ySpeed;
@@ -77,18 +83,20 @@ public:
         m_targetYSpeed = m_targetYSpeed / static_cast<float>(m_neighbors.size() + 1);
     }
 
-    void setTriangleVertexes(){
+    // Create vertices of the triangle
+    void setTriangleVertices(){
         m_leftPoint = {-m_height/2, m_baseWidth/2};
         m_rightPoint = {-m_height/2, -m_baseWidth/2};
         m_topPoint = {m_height/2, 0};
     }
 
+    // Update the parameters of a boid
     void updateParameters(float speedFactor, float deviateValue, float base, float height, float detectionRadius){
         m_speedFactor = speedFactor;
         m_deviateValue = deviateValue;
         m_baseWidth = base;
         m_height = height;
-        setTriangleVertexes();
+        setTriangleVertices();
         if (detectionRadius >= m_height){
             m_detectionRadius = detectionRadius;
         } else {
@@ -96,6 +104,7 @@ public:
         }
     }
 
+    // Draw the ID of the boid next to it
     void drawID(p6::Context& ctx){
         p6::BottomLeftCorner textPos = m_center + glm::vec2{m_height/2, m_height/2};
         std::u16string text = to_u16string(m_id);
@@ -104,6 +113,7 @@ public:
         ctx.text(text, textPos);
     }
 
+    // Draw the detection area of the boid
     void drawDetectionCircle(p6::Context& ctx){
         ctx.stroke_weight = 0.0027f;
         ctx.stroke = {0.1f, 0.1f, 0.1f, 0.6f};
@@ -113,6 +123,7 @@ public:
         );
     }
 
+    // Move the boid according to its parameters
     void boidMovement(){
         m_xToTarget = m_targetXSpeed - m_xSpeed;
         m_yToTarget = m_targetYSpeed - m_ySpeed;
@@ -121,6 +132,7 @@ public:
         m_center += glm::normalize(glm::vec2(m_xSpeed, m_ySpeed)) * m_speedFactor;
     }
 
+    // Draw a boid
     void draw(p6::Context& ctx, bool displayCircles, bool displayID){
 
         // Draw boid
@@ -134,7 +146,7 @@ public:
             m_topPoint,
             m_center,
             p6::Angle(glm::normalize(glm::vec2(m_xSpeed, m_ySpeed)))
-            );
+        );
 
         // Draw detection circle
         if (displayCircles){
@@ -165,7 +177,6 @@ public:
         if (m_center[1] < - 1){
             m_center[1] = 1;
         }
-
         m_neighbors.clear();
     }
 };
@@ -235,10 +246,12 @@ int main(int argc, char* argv[])
         // Show a simple window
         ImGui::Begin("Boids control panel");
         ImGui::Text("Click anywhere to add more boids");
+        ImGui::Separator();
         ImGui::SliderFloat("Speed factor", &globalSpeedFactor, 0.001f, 0.1f);
         ImGui::SliderFloat("Base width", &globalBase, 0.001f, 0.1f);
         ImGui::SliderFloat("Height", &globalHeight, 0.001f, 0.1f);
         ImGui::SliderFloat("Detection radius", &globalDetectionRadius, std::fmax(globalHeight, globalBase), 0.2f);
+        ImGui::Separator();
         ImGui::Checkbox("Display detection circle", &displayDetectionCircle);
         ImGui::Checkbox("Display ID", &displayID);
         ImGui::End();
