@@ -1,15 +1,22 @@
 #pragma once
-#include <cstdlib>
 #include "p6/p6.h"
+#include <cstdlib>
+#include <cmath>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <random>
+
 #ifndef SIMPLE_P6_SETUP_BOIDS_H
 #define SIMPLE_P6_SETUP_BOIDS_H
-
 
 class boid{
 
 private :
 
     unsigned int            m_id;
+    std::string             m_name;
 
     glm::vec2               m_position          = {0, 0};
     glm::vec2               m_speed{};
@@ -47,7 +54,7 @@ public:
     // ---------- CONSTRUCTORS
 
     // Random position boid constructor
-    boid(float speedFactor, float base, float height, float detectionFactor, float avoidanceFactor, unsigned int boidId, p6::Context& context, float windowMargin): m_id(boidId), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(speedFactor), m_baseWidth(base), m_height(height), m_detectionFactor(detectionFactor), m_avoidanceFactor(avoidanceFactor){
+    boid(float speedFactor, float base, float height, float detectionFactor, float avoidanceFactor, unsigned int boidId, p6::Context& context, float windowMargin, std::vector<std::string> &namesList): m_id(boidId), m_name(namesList[m_id]), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(speedFactor), m_baseWidth(base), m_height(height), m_detectionFactor(detectionFactor), m_avoidanceFactor(avoidanceFactor){
         m_detectionRadius   = std::fmax(m_height, m_baseWidth) * m_detectionFactor;
         m_avoidanceRadius   = std::fmax(m_height, m_baseWidth) * m_avoidanceFactor;
         m_position = glm::vec2(p6::random::number(-context.aspect_ratio() + windowMargin, context.aspect_ratio() - windowMargin), p6::random::number(-1 + windowMargin, 1 - windowMargin));
@@ -55,7 +62,7 @@ public:
     }
 
     // Defined position boid constructor
-    boid(glm::vec2 position, float speedFactor, float base, float height, float detectionFactor, float avoidanceFactor, unsigned int boidId): m_id(boidId), m_position(position), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(speedFactor), m_baseWidth(base), m_height(height), m_detectionFactor(detectionFactor), m_avoidanceFactor(avoidanceFactor){
+    boid(glm::vec2 position, float speedFactor, float base, float height, float detectionFactor, float avoidanceFactor, unsigned int boidId, std::vector<std::string> &namesList): m_id(boidId), m_name(namesList[m_id]), m_position(position), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(speedFactor), m_baseWidth(base), m_height(height), m_detectionFactor(detectionFactor), m_avoidanceFactor(avoidanceFactor){
         m_detectionRadius   = std::fmax(m_height, m_baseWidth) * m_detectionFactor;
         m_avoidanceRadius   = std::fmax(m_height, m_baseWidth) * m_avoidanceFactor;
         setTriangleVertices();
@@ -75,6 +82,8 @@ public:
 
     void avoidBoundaries(p6::Context& ctx, float margin);
 
+    void drawEdgeProjection(p6::Context& ctx, float margin);
+
     void speedLimits();
 
     // Create vertices of the triangle
@@ -85,6 +94,9 @@ public:
 
     // Draw the ID of the boid next to it
     void drawID(p6::Context& ctx);
+
+    // Draw the name of the boid next to it
+    void drawName(p6::Context& ctx);
 
     // Draw the detection area of the boid
     void drawDetectionCircle(p6::Context& ctx);
@@ -97,14 +109,16 @@ public:
     void boidMovement(p6::Context& ctx, float margin);
 
     // Draw a boid
-    void draw(p6::Context& ctx, float margin, bool isDetectionDisplayed, bool isAvoidanceRadiusDisplayed, bool isIdDisplayed, bool isDistanceToNeighborDisplayed);
+    void draw(p6::Context& ctx, float margin, bool isDetectionDisplayed, bool isAvoidanceRadiusDisplayed, bool isIdDisplayed, bool isNameDisplayed, bool isDistanceToNeighborDisplayed, bool isEdgeProjectionDisplayed);
 };
 
-std::u16string to_u16string(unsigned int const &value);
+std::u16string uint_to_u16string(unsigned int const &value);
+std::u16string utf8_to_utf16(std::string const& utf8);
 
-void addBoid(std::vector<boid>& boids, glm::vec2 startPos, float speedFactor, float baseWidth, float height, float detectionFactor, float avoidanceFactor);
+void addBoid(std::vector<boid>& boids, glm::vec2 startPos, float speedFactor, float baseWidth, float height, float detectionFactor, float avoidanceFactor, std::vector<std::string> &namesList);
 
-void displayBoidsNumber(std::vector<boid>& boids, p6::Context& context);
+void displayBoidsNumber(std::vector<boid>& boids, p6::Context& ctx);
 
+std::vector<std::string> getNamesList();
 
 #endif // SIMPLE_P6_SETUP_BOIDS_H

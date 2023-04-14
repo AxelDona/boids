@@ -8,6 +8,10 @@ project(Simple-p6-Setup)
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} src/boids.cpp include/boids.h)
 target_include_directories(${PROJECT_NAME} PRIVATE src include)
+# Copie le fichier names.txt dans le même dossier que l'exécutable
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/src/names.txt ${CMAKE_BINARY_DIR}/names.txt)
 
 # ---Choose C++ version---
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
@@ -28,6 +32,11 @@ if(WARNINGS_AS_ERRORS)
     else()
         target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
     endif()
+endif()
+
+# ---Disable treating warnings as errors for external folder---
+if(NOT MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<STREQUAL:$<TARGET_PROPERTY:SOURCE_DIR>,${CMAKE_CURRENT_SOURCE_DIR}/external>>:-Wno-error>")
 endif()
 
 # ---Setup Testing---

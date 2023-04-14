@@ -3,6 +3,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 #include "boids.h"
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -27,9 +28,11 @@ int main(int argc, char* argv[])
     float                  globalAlignmentFactor            = 0.015;
     float                  globalCohesionFactor             = 0.002;
     bool                   isIdDisplayed                    = false;
+    bool                   isNameDisplayed                  = false;
     bool                   isDetectionDisplayed             = false;
     bool                   isAvoidanceRadiusDisplayed       = false;
     bool                   isDistanceToNeighborDisplayed    = false;
+    bool                   isEdgeProjectionDisplayed        = true;
     float                  windowMargin                     = 0.4;
 
     // Actual app
@@ -38,8 +41,11 @@ int main(int argc, char* argv[])
     // Initialize a number of boids
     size_t boidNumbers = 50;
 
+    // Get list of names.txt from file
+    std::vector<std::string> namesList = getNamesList();
+
     for (unsigned int i = 0; i < boidNumbers; i++){
-        boid singleBoid(globalSpeedFactor, globalBase, globalHeight, globalDetectionFactor, globalAvoidanceFactor, i, ctx, windowMargin);
+        boid singleBoid(globalSpeedFactor, globalBase, globalHeight, globalDetectionFactor, globalAvoidanceFactor, i, ctx, windowMargin, namesList);
         boids.push_back(singleBoid);
     }
 
@@ -50,7 +56,7 @@ int main(int argc, char* argv[])
         for(size_t i = 0; i < boids.size(); i++){
             boids[i].updateBoidParameters(globalSpeedFactor, globalBase, globalHeight, globalSeparationFactor, globalAlignmentFactor, globalCohesionFactor, globalDetectionFactor, globalAvoidanceFactor);
             boids[i].checkNeighbors(boids);
-            boids[i].draw(ctx, windowMargin, isDetectionDisplayed, isAvoidanceRadiusDisplayed, isIdDisplayed, isDistanceToNeighborDisplayed);
+            boids[i].draw(ctx, windowMargin, isDetectionDisplayed, isAvoidanceRadiusDisplayed, isIdDisplayed, isNameDisplayed, isDistanceToNeighborDisplayed, isEdgeProjectionDisplayed);
         }
 
         // Show a simple window
@@ -76,14 +82,15 @@ int main(int argc, char* argv[])
         ImGui::Checkbox("Display collision circle", &isAvoidanceRadiusDisplayed);
         ImGui::Checkbox("Display neighbor tension", &isDistanceToNeighborDisplayed);
         ImGui::Checkbox("Display ID", &isIdDisplayed);
+        ImGui::Checkbox("Display name", &isNameDisplayed);
+        ImGui::Checkbox("Display edge projection", &isEdgeProjectionDisplayed);
         ImGui::End();
 
         if (ctx.mouse_button_is_pressed(static_cast<p6::Button>(GLFW_MOUSE_BUTTON_LEFT)) && !ImGui::GetIO().WantCaptureMouse){
-            addBoid(boids, ctx.mouse(), globalSpeedFactor, globalBase, globalHeight, globalDetectionFactor, globalAvoidanceFactor);
+            addBoid(boids, ctx.mouse(), globalSpeedFactor, globalBase, globalHeight, globalDetectionFactor, globalAvoidanceFactor, namesList);
         }
 
         displayBoidsNumber(boids, ctx);
-
     };
 
     ctx.maximize_window();
