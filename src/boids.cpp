@@ -62,6 +62,32 @@ void boid::avoidBoundaries(p6::Context& ctx, float margin){
     }
 }
 
+void boid::avoidPointer(p6::Context& ctx, float pointerAvoidanceRadius){
+    float pointerAvoidanceFactor = 4.0;
+    if (glm::distance(m_position, ctx.mouse()) < pointerAvoidanceRadius){
+
+        if (m_position.x < ctx.mouse().x + pointerAvoidanceRadius && m_position.x > ctx.mouse().x){
+            m_turnSpeed.x = (- (m_position.x - (ctx.mouse().x + pointerAvoidanceRadius))) * m_turnFactor * pointerAvoidanceFactor;
+            m_speed.x = m_speed.x + m_turnSpeed.x;
+        } else if (m_position.x > ctx.mouse().x - pointerAvoidanceRadius  && m_position.x < ctx.mouse().x){
+            m_turnSpeed.x = (m_position.x - (ctx.mouse().x - pointerAvoidanceRadius)) * m_turnFactor * pointerAvoidanceFactor;
+            m_speed.x = m_speed.x - m_turnSpeed.x;
+        } else {
+            m_turnSpeed.x = m_turnSpeedDefault;
+        }
+
+        if (m_position.y < ctx.mouse().y + pointerAvoidanceRadius && m_position.y > ctx.mouse().y){
+            m_turnSpeed.y = (- (m_position.y - (ctx.mouse().y + pointerAvoidanceRadius))) * m_turnFactor * pointerAvoidanceFactor;
+            m_speed.y = m_speed.y + m_turnSpeed.y;
+        } else if (m_position.y > ctx.mouse().y - pointerAvoidanceRadius && m_position.y < ctx.mouse().y){
+            m_turnSpeed.y = (m_position.y - (ctx.mouse().y - pointerAvoidanceRadius)) * m_turnFactor * pointerAvoidanceFactor;
+            m_speed.y = m_speed.y - m_turnSpeed.y;
+        } else {
+            m_turnSpeed.y = m_turnSpeedDefault;
+        }
+    }
+}
+
 void boid::drawEdgeProjection(p6::Context& ctx, float margin){
     float circleRadius = 0.5;
     float boundaryAlertCircleOffset = circleRadius - 0.02;
@@ -177,19 +203,20 @@ void boid::drawNeighborDistance(p6::Context& ctx){
 }
 
 // Move the boid according to its parameters
-void boid::boidMovement(p6::Context& ctx, float margin){
+void boid::boidMovement(p6::Context& ctx, float margin, float pointerAvoidanceRadius){
     if(!m_neighbors.empty()){
         separation();
         alignement();
         cohesion();
     }
+    avoidPointer(ctx, pointerAvoidanceRadius);
     avoidBoundaries(ctx, margin);
     speedLimits();
     m_position = m_position + (m_speed * m_speedFactor);
 }
 
 // Draw a boid
-void boid::draw(p6::Context& ctx, float margin, bool isDetectionDisplayed, bool isAvoidanceRadiusDisplayed, bool isIdDisplayed, bool isNameDisplayed, bool isDistanceToNeighborDisplayed, bool isEdgeProjectionDisplayed){
+void boid::draw(p6::Context& ctx, float margin, float pointerAvoidanceRadius, bool isDetectionDisplayed, bool isAvoidanceRadiusDisplayed, bool isIdDisplayed, bool isNameDisplayed, bool isDistanceToNeighborDisplayed, bool isEdgeProjectionDisplayed){
 
     // Draw the triangle
     ctx.use_stroke = true;
@@ -232,15 +259,15 @@ void boid::draw(p6::Context& ctx, float margin, bool isDetectionDisplayed, bool 
     }
 
     // Move triangle
-    boidMovement(ctx, margin);
+    boidMovement(ctx, margin, pointerAvoidanceRadius);
 
     // Get color for next frame
     if (!m_closeNeighbors.empty()){
-        m_color = {0.7f, 0.2f, 0.7f};
+        m_color = {0.7f, 0.6f, 0.1f};
     } else if (!m_neighbors.empty()){
-        m_color = {0.2f, 0.8f, 0.3f};
+        m_color = {0.1f, 0.7f, 0.8f};
     } else  {
-        m_color = {1.0f, 0.15f, 0.3f};
+        m_color = {1.0f, 0.0f, 0.4f};
     }
 
     // Reset array of neighbors

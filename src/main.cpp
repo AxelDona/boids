@@ -27,13 +27,16 @@ int main(int argc, char* argv[])
     float                  globalSeparationFactor           = 0.3;
     float                  globalAlignmentFactor            = 0.015;
     float                  globalCohesionFactor             = 0.002;
+
     bool                   isIdDisplayed                    = false;
     bool                   isNameDisplayed                  = false;
     bool                   isDetectionDisplayed             = false;
     bool                   isAvoidanceRadiusDisplayed       = false;
     bool                   isDistanceToNeighborDisplayed    = false;
     bool                   isEdgeProjectionDisplayed        = true;
+
     float                  windowMargin                     = 0.4;
+    float                  pointerAvoidanceRadius           = 0.2;
 
     // Actual app
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
@@ -56,7 +59,7 @@ int main(int argc, char* argv[])
         for(size_t i = 0; i < boids.size(); i++){
             boids[i].updateBoidParameters(globalSpeedFactor, globalBase, globalHeight, globalSeparationFactor, globalAlignmentFactor, globalCohesionFactor, globalDetectionFactor, globalAvoidanceFactor);
             boids[i].checkNeighbors(boids);
-            boids[i].draw(ctx, windowMargin, isDetectionDisplayed, isAvoidanceRadiusDisplayed, isIdDisplayed, isNameDisplayed, isDistanceToNeighborDisplayed, isEdgeProjectionDisplayed);
+            boids[i].draw(ctx, windowMargin, pointerAvoidanceRadius, isDetectionDisplayed, isAvoidanceRadiusDisplayed, isIdDisplayed, isNameDisplayed, isDistanceToNeighborDisplayed, isEdgeProjectionDisplayed);
         }
 
         // Show a simple window

@@ -20,7 +20,7 @@ private :
 
     glm::vec2               m_position          = {0, 0};
     glm::vec2               m_speed{};
-    float                   m_maxSpeed          = 1.0;
+    float                   m_maxSpeed          = 1.4;
     float                   m_minSpeed          = 0.4;
 
     float                   m_speedFactor       = 0.0005;
@@ -34,7 +34,7 @@ private :
 
     float                   m_secureArea        = m_baseWidth * m_height * 2;
 
-    p6::Color               m_color             = {1.0f, 0.15f, 0.3f};
+    p6::Color               m_color             = {1.0f, 0.0f, 0.4f};
 
     float                   m_detectionRadius   = std::fmax(m_height, m_baseWidth) * m_detectionFactor;
     float                   m_avoidanceRadius   = std::fmax(m_height, m_baseWidth) * m_avoidanceFactor;
@@ -82,6 +82,8 @@ public:
 
     void avoidBoundaries(p6::Context& ctx, float margin);
 
+    void avoidPointer(p6::Context& ctx, float pointerAvoidanceRadius);
+
     void drawEdgeProjection(p6::Context& ctx, float margin);
 
     void speedLimits();
@@ -106,10 +108,10 @@ public:
     void drawNeighborDistance(p6::Context& ctx);
 
     // Move the boid according to its parameters
-    void boidMovement(p6::Context& ctx, float margin);
+    void boidMovement(p6::Context& ctx, float margin, float pointerAvoidanceRadius);
 
     // Draw a boid
-    void draw(p6::Context& ctx, float margin, bool isDetectionDisplayed, bool isAvoidanceRadiusDisplayed, bool isIdDisplayed, bool isNameDisplayed, bool isDistanceToNeighborDisplayed, bool isEdgeProjectionDisplayed);
+    void draw(p6::Context& ctx, float margin, float pointerAvoidanceRadius, bool isDetectionDisplayed, bool isAvoidanceRadiusDisplayed, bool isIdDisplayed, bool isNameDisplayed, bool isDistanceToNeighborDisplayed, bool isEdgeProjectionDisplayed);
 };
 
 std::u16string uint_to_u16string(unsigned int const &value);
