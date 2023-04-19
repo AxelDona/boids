@@ -3,7 +3,7 @@
 // ---------- METHODS
 
 // Check if there are neighbor boids around and store them in an array
-void boid::checkNeighbors(const std::vector<boid>& boids){
+void Boid::checkNeighbors(const std::vector<Boid>& boids){
     for (const auto & boid : boids){
         if (glm::distance(m_position, boid.m_position) <= m_detectionRadius*2 && m_id != boid.m_id){
             m_neighbors.push_back(boid);
@@ -11,7 +11,7 @@ void boid::checkNeighbors(const std::vector<boid>& boids){
     }
 }
 
-void boid::separation(){
+void Boid::separation(){
     for (auto & m_neighbor : m_neighbors){
         if (glm::distance(m_position, m_neighbor.m_position) < m_avoidanceRadius){
             m_closeNeighbors.push_back(m_neighbor);
@@ -21,7 +21,7 @@ void boid::separation(){
 }
 
 // Get the general direction of the group of neighbors
-void boid::alignement(){
+void Boid::alignement(){
     glm::vec2 averageGroupSpeed{};
     for (auto & m_neighbor : m_neighbors){
         averageGroupSpeed += m_neighbor.m_speed;
@@ -31,7 +31,7 @@ void boid::alignement(){
     m_speed += (averageGroupSpeed - m_speed) * m_alignmentFactor;
 }
 
-void boid::cohesion(){
+void Boid::cohesion(){
     glm::vec2 averagePosition{};
     for (auto & m_neighbor : m_neighbors){
         averagePosition += m_neighbor.m_position;
@@ -41,46 +41,45 @@ void boid::cohesion(){
     m_speed += (averagePosition - m_speed) * m_cohesionFactor;
 }
 
-void boid::avoidBoundaries(p6::Context& ctx, float margin){
-    if (m_position.x < -ctx.aspect_ratio() + margin){
-        m_turnSpeed.x = (- (m_position.x - (-ctx.aspect_ratio() + margin))) * m_turnFactor;
+void Boid::avoidBoundaries(){
+    if (m_position.x < -m_world.m_context.aspect_ratio() + m_world.m_windowMargin){
+        m_turnSpeed.x = (- (m_position.x - (-m_world.m_context.aspect_ratio() + m_world.m_windowMargin))) * m_turnFactor;
         m_speed.x = m_speed.x + m_turnSpeed.x;
-    } else if (m_position.x > ctx.aspect_ratio() - margin){
-        m_turnSpeed.x = (m_position.x - (ctx.aspect_ratio() - margin)) * m_turnFactor;
+    } else if (m_position.x > m_world.m_context.aspect_ratio() - m_world.m_windowMargin){
+        m_turnSpeed.x = (m_position.x - (m_world.m_context.aspect_ratio() - m_world.m_windowMargin)) * m_turnFactor;
         m_speed.x = m_speed.x - m_turnSpeed.x;
     } else {
         m_turnSpeed.x = m_turnSpeedDefault;
     }
-    if (m_position.y > 1 - margin){
-        m_turnSpeed.y = (m_position.y - (1 - margin)) * m_turnFactor;
+    if (m_position.y > 1 - m_world.m_windowMargin){
+        m_turnSpeed.y = (m_position.y - (1 - m_world.m_windowMargin)) * m_turnFactor;
         m_speed.y = m_speed.y - m_turnSpeed.y;
-    } else if (m_position.y < - 1 + margin){
-        m_turnSpeed.y = - ((m_position.y - (- 1 + margin))) * m_turnFactor;
+    } else if (m_position.y < - 1 + m_world.m_windowMargin){
+        m_turnSpeed.y = - ((m_position.y - (- 1 + m_world.m_windowMargin))) * m_turnFactor;
         m_speed.y = m_speed.y + m_turnSpeed.y;
     } else {
         m_turnSpeed.y = m_turnSpeedDefault;
     }
 }
 
-void boid::avoidPointer(p6::Context& ctx, float pointerAvoidanceRadius){
-    float pointerAvoidanceFactor = 4.0;
-    if (glm::distance(m_position, ctx.mouse()) < pointerAvoidanceRadius){
+void Boid::avoidPoint(glm::vec2 position, float avoidanceRadius, float avoidanceFactor){
+    if (glm::distance(m_position, position) < avoidanceRadius){
 
-        if (m_position.x < ctx.mouse().x + pointerAvoidanceRadius && m_position.x > ctx.mouse().x){
-            m_turnSpeed.x = (- (m_position.x - (ctx.mouse().x + pointerAvoidanceRadius))) * m_turnFactor * pointerAvoidanceFactor;
+        if (m_position.x < position.x + avoidanceRadius && m_position.x > position.x){
+            m_turnSpeed.x = (- (m_position.x - (position.x + avoidanceRadius))) * m_turnFactor * avoidanceFactor;
             m_speed.x = m_speed.x + m_turnSpeed.x;
-        } else if (m_position.x > ctx.mouse().x - pointerAvoidanceRadius  && m_position.x < ctx.mouse().x){
-            m_turnSpeed.x = (m_position.x - (ctx.mouse().x - pointerAvoidanceRadius)) * m_turnFactor * pointerAvoidanceFactor;
+        } else if (m_position.x > position.x - avoidanceRadius  && m_position.x < position.x){
+            m_turnSpeed.x = (m_position.x - (position.x - avoidanceRadius)) * m_turnFactor * avoidanceFactor;
             m_speed.x = m_speed.x - m_turnSpeed.x;
         } else {
             m_turnSpeed.x = m_turnSpeedDefault;
         }
 
-        if (m_position.y < ctx.mouse().y + pointerAvoidanceRadius && m_position.y > ctx.mouse().y){
-            m_turnSpeed.y = (- (m_position.y - (ctx.mouse().y + pointerAvoidanceRadius))) * m_turnFactor * pointerAvoidanceFactor;
+        if (m_position.y < position.y + avoidanceRadius && m_position.y > position.y){
+            m_turnSpeed.y = (- (m_position.y - (position.y + avoidanceRadius))) * m_turnFactor * avoidanceFactor;
             m_speed.y = m_speed.y + m_turnSpeed.y;
-        } else if (m_position.y > ctx.mouse().y - pointerAvoidanceRadius && m_position.y < ctx.mouse().y){
-            m_turnSpeed.y = (m_position.y - (ctx.mouse().y - pointerAvoidanceRadius)) * m_turnFactor * pointerAvoidanceFactor;
+        } else if (m_position.y > position.y - avoidanceRadius && m_position.y < position.y){
+            m_turnSpeed.y = (m_position.y - (position.y - avoidanceRadius)) * m_turnFactor * avoidanceFactor;
             m_speed.y = m_speed.y - m_turnSpeed.y;
         } else {
             m_turnSpeed.y = m_turnSpeedDefault;
@@ -88,31 +87,37 @@ void boid::avoidPointer(p6::Context& ctx, float pointerAvoidanceRadius){
     }
 }
 
-void boid::drawEdgeProjection(p6::Context& ctx, float margin){
-    float circleRadius = 0.5;
-    float boundaryAlertCircleOffset = circleRadius - 0.02;
-    ctx.use_stroke = false;
-    ctx.use_fill = true;
-    ctx.fill = m_color;
+void Boid::followPoint(glm::vec2 position, float followRadius, float followFactor){
+    if (glm::distance(m_position, position) < followRadius){
 
-    if (m_position.x < -ctx.aspect_ratio() + margin){
-        ctx.fill.a() = (m_position.x - (- ctx.aspect_ratio() + margin)) / - ctx.aspect_ratio();
-        ctx.circle(glm::vec2(-ctx.aspect_ratio() - boundaryAlertCircleOffset, m_position.y), circleRadius);
-    } else if (m_position.x > ctx.aspect_ratio() - margin){
-        ctx.fill.a() = (m_position.x - (ctx.aspect_ratio() - margin)) / ctx.aspect_ratio();
-        ctx.circle(glm::vec2(ctx.aspect_ratio() + boundaryAlertCircleOffset, m_position.y), circleRadius);
-    }
-
-    if (m_position.y > 1 - margin){
-        ctx.fill.a() = (m_position.y - (1 - margin)) / 1;
-        ctx.circle(glm::vec2(m_position.x, 1 + boundaryAlertCircleOffset), circleRadius);
-    } else if (m_position.y < - 1 + margin){
-        ctx.fill.a() = (m_position.y - (-1 + margin)) / -1;
-        ctx.circle(glm::vec2( m_position.x, -1 - boundaryAlertCircleOffset), circleRadius);
     }
 }
 
-void boid::speedLimits(){
+void Boid::drawEdgeProjection(){
+    float circleRadius = 0.5;
+    float boundaryAlertCircleOffset = circleRadius - 0.02;
+    m_world.m_context.use_stroke = false;
+    m_world.m_context.use_fill = true;
+    m_world.m_context.fill = m_color;
+
+    if (m_position.x < -m_world.m_context.aspect_ratio() + m_world.m_windowMargin){
+        m_world.m_context.fill.a() = (m_position.x - (- m_world.m_context.aspect_ratio() + m_world.m_windowMargin)) / - m_world.m_context.aspect_ratio();
+        m_world.m_context.circle(glm::vec2(-m_world.m_context.aspect_ratio() - boundaryAlertCircleOffset, m_position.y), circleRadius);
+    } else if (m_position.x > m_world.m_context.aspect_ratio() - m_world.m_windowMargin){
+        m_world.m_context.fill.a() = (m_position.x - (m_world.m_context.aspect_ratio() - m_world.m_windowMargin)) / m_world.m_context.aspect_ratio();
+        m_world.m_context.circle(glm::vec2(m_world.m_context.aspect_ratio() + boundaryAlertCircleOffset, m_position.y), circleRadius);
+    }
+
+    if (m_position.y > 1 - m_world.m_windowMargin){
+        m_world.m_context.fill.a() = (m_position.y - (1 - m_world.m_windowMargin)) / 1;
+        m_world.m_context.circle(glm::vec2(m_position.x, 1 + boundaryAlertCircleOffset), circleRadius);
+    } else if (m_position.y < - 1 + m_world.m_windowMargin){
+        m_world.m_context.fill.a() = (m_position.y - (-1 + m_world.m_windowMargin)) / -1;
+        m_world.m_context.circle(glm::vec2( m_position.x, -1 - boundaryAlertCircleOffset), circleRadius);
+    }
+}
+
+void Boid::speedLimits(){
     float totalSpeed = std::sqrt(m_speed.x * m_speed.x + m_speed.y * m_speed.y);
     if (totalSpeed > m_maxSpeed){
         m_speed.x = (m_speed.x / totalSpeed) * m_maxSpeed;
@@ -125,22 +130,22 @@ void boid::speedLimits(){
 }
 
 // Create vertices of the triangle
-void boid::setTriangleVertices(){
+void Boid::setTriangleVertices(){
     m_triangleLeftPoint = {-m_height/2, m_baseWidth/2};
     m_triangleRightPoint = {-m_height/2, -m_baseWidth/2};
     m_triangleTopPoint   = {m_height/2, 0};
 }
 
-// Update the parameters of a boid
-void boid::updateBoidParameters(float speedFactor, float base, float height, float separationFactor, float alignmentFactor, float cohesionFactor, float detectionFactor, float avoidanceFactor){
-    m_speedFactor = speedFactor;
-    m_baseWidth = base;
-    m_height = height;
-    m_separationFactor = separationFactor;
-    m_alignmentFactor  = alignmentFactor;
-    m_cohesionFactor = cohesionFactor;
-    m_avoidanceFactor = avoidanceFactor;
-    m_detectionFactor = detectionFactor;
+// Update the parameters of a Boid
+void Boid::updateBoidParameters(){
+    m_speedFactor = m_world.m_worldSpeedFactor;
+    m_baseWidth = m_world.m_worldBase;
+    m_height = m_world.m_worldHeight;
+    m_separationFactor = m_world.m_worldSeparationFactor;
+    m_alignmentFactor  = m_world.m_worldAlignmentFactor;
+    m_cohesionFactor = m_world.m_worldCohesionFactor;
+    m_avoidanceFactor = m_world.m_worldAvoidanceFactor;
+    m_detectionFactor = m_world.m_worldDetectionFactor;
     m_avoidanceRadius = std::fmax(m_height, m_baseWidth)*m_avoidanceFactor;
     m_detectionRadius = std::fmax(m_height, m_baseWidth)*m_detectionFactor;
     setTriangleVertices();
@@ -149,81 +154,86 @@ void boid::updateBoidParameters(float speedFactor, float base, float height, flo
     }
 }
 
-// Draw the ID of the boid next to it
-void boid::drawID(p6::Context& ctx){
+// Draw the ID of the Boid next to it
+void Boid::drawID(){
     p6::BottomLeftCorner textPos = m_position + glm::vec2{m_height/2, m_height/2};
     std::u16string text = uint_to_u16string(m_id);
-    ctx.fill = {1.0f, 1.0f, 1.0f, 0.5f};
-    ctx.text_inflating = 0.008f;
-    ctx.text_size = 0.015f;
-    ctx.text(text, textPos);
+    m_world.m_context.fill = {1.0f, 1.0f, 1.0f, 0.5f};
+    m_world.m_context.text_inflating = 0.008f;
+    m_world.m_context.text_size = 0.015f;
+    m_world.m_context.text(text, textPos);
 }
 
-// Draw the name of the boid next to it
-void boid::drawName(p6::Context& ctx){
+// Draw the name of the Boid next to it
+void Boid::drawName(){
     p6::TopLeftCorner textPos = m_position + glm::vec2{m_height, - m_height/2 };
     std::u16string text = utf8_to_utf16(m_name);
-    ctx.fill = {1.0f, 1.0f, 1.0f, 0.5f};
-    ctx.text_inflating = 0.008f;
-    ctx.text_size = 0.015f;
-    ctx.text(text, textPos);
+    m_world.m_context.fill = {1.0f, 1.0f, 1.0f, 0.5f};
+    m_world.m_context.text_inflating = 0.008f;
+    m_world.m_context.text_size = 0.015f;
+    m_world.m_context.text(text, textPos);
 }
 
-// Draw the detection area of the boid
-void boid::drawDetectionCircle(p6::Context& ctx){
-    ctx.stroke_weight = 0.0027f;
-    ctx.stroke = {0.1f, 0.5f, 0.1f, 0.7f};
-    ctx.circle(
+// Draw the detection area of the Boid
+void Boid::drawDetectionCircle(){
+    m_world.m_context.stroke_weight = 0.0027f;
+    m_world.m_context.stroke = {0.1f, 0.5f, 0.1f, 0.7f};
+    m_world.m_context.circle(
         m_position,
         m_detectionRadius
     );
 }
 
-void boid::drawAvoidanceCircle(p6::Context& ctx){
-    ctx.stroke_weight = 0.0027f;
-    ctx.stroke = {0.5f, 0.1f, 0.1f, 0.7f};
-    ctx.circle(
+void Boid::drawAvoidanceCircle(){
+    m_world.m_context.stroke_weight = 0.0027f;
+    m_world.m_context.stroke = {0.5f, 0.1f, 0.1f, 0.7f};
+    m_world.m_context.circle(
         m_position,
         m_avoidanceRadius
     );
 }
 
-void boid::drawNeighborDistance(p6::Context& ctx){
+void Boid::drawNeighborDistance(){
     if (m_neighbors.empty()){
         return;
     }
     for (auto & m_neighbor : m_neighbors){
-        ctx.stroke_weight = 0.0005f;
-        ctx.stroke = {1.0f, 1.0f, 1.0f, 0.5f};
-        ctx.line(
+        m_world.m_context.stroke_weight = 0.0005f;
+        m_world.m_context.stroke = {1.0f, 1.0f, 1.0f, 0.5f};
+        m_world.m_context.line(
             m_position,
             m_neighbor.m_position
         );
     }
 }
 
-// Move the boid according to its parameters
-void boid::boidMovement(p6::Context& ctx, float margin, float pointerAvoidanceRadius){
+// Move the Boid according to its parameters
+void Boid::boidMovement(){
     if(!m_neighbors.empty()){
         separation();
         alignement();
         cohesion();
     }
-    avoidPointer(ctx, pointerAvoidanceRadius);
-    avoidBoundaries(ctx, margin);
+    if (m_world.m_isPointerRepellingBoids){
+        avoidPoint(m_world.m_context.mouse(), m_world.m_pointerAvoidanceRadius, 4.0);
+    }
+    if (m_world.m_isPointerAttractingBoids){
+        followPoint(m_world.m_context.mouse(), m_world.m_pointerAvoidanceRadius, 2.0);
+    }
+    avoidBoundaries();
     speedLimits();
     m_position = m_position + (m_speed * m_speedFactor);
 }
 
-// Draw a boid
-void boid::draw(p6::Context& ctx, float margin, float pointerAvoidanceRadius, bool isDetectionDisplayed, bool isAvoidanceRadiusDisplayed, bool isIdDisplayed, bool isNameDisplayed, bool isDistanceToNeighborDisplayed, bool isEdgeProjectionDisplayed){
+// Draw a Boid
+void Boid::draw(){
 
     // Draw the triangle
-    ctx.use_stroke = true;
-    ctx.use_fill = false;
-    ctx.stroke_weight = 0.004f;
-    ctx.stroke = m_color;
-    ctx.triangle(
+    m_world.m_context.use_stroke = true;
+    m_world.m_context.use_fill = false;
+    m_world.m_context.stroke_weight = 0.004f;
+    m_world.m_context.stroke = m_color;
+    m_world.m_context.triangle(
         m_triangleLeftPoint,
         m_triangleRightPoint,
         m_triangleTopPoint,
@@ -232,34 +242,34 @@ void boid::draw(p6::Context& ctx, float margin, float pointerAvoidanceRadius, bo
     );
 
     // Draw detection circle
-    if (isDetectionDisplayed){
-        drawDetectionCircle(ctx);
+    if (m_world.m_isDetectionDisplayed){
+        drawDetectionCircle();
     }
 
-    if (isAvoidanceRadiusDisplayed){
-        drawAvoidanceCircle(ctx);
+    if (m_world.m_isAvoidanceRadiusDisplayed){
+        drawAvoidanceCircle();
     }
 
     // Write ID
-    if (isIdDisplayed){
-        drawID(ctx);
+    if (m_world.m_isIdDisplayed){
+        drawID();
     }
 
     // Write name
-    if (isNameDisplayed){
-        drawName(ctx);
+    if (m_world.m_isNameDisplayed){
+        drawName();
     }
 
-    if (isDistanceToNeighborDisplayed){
-        drawNeighborDistance(ctx);
+    if (m_world.m_isDistanceToNeighborDisplayed){
+        drawNeighborDistance();
     }
 
-    if (isEdgeProjectionDisplayed){
-        drawEdgeProjection(ctx, margin);
+    if (m_world.m_isEdgeProjectionDisplayed){
+        drawEdgeProjection();
     }
 
     // Move triangle
-    boidMovement(ctx, margin, pointerAvoidanceRadius);
+    boidMovement();
 
     // Get color for next frame
     if (!m_closeNeighbors.empty()){
@@ -290,12 +300,12 @@ std::u16string utf8_to_utf16(std::string const& utf8) {
     return s;
 }
 
-void addBoid(std::vector<boid>& boids, glm::vec2 startPos, float speedFactor, float baseWidth, float height, float detectionFactor, float avoidanceFactor, std::vector<std::string> &namesList){
-    boid singularBoid(startPos, speedFactor, baseWidth, height, detectionFactor, avoidanceFactor, boids.size(), namesList);
+void addBoid(World& world, std::vector<Boid>& boids, glm::vec2 startPos, std::vector<std::string> &namesList){
+    Boid singularBoid(world, startPos, boids.size(), namesList);
     boids.push_back(singularBoid);
 }
 
-void displayBoidsNumber(std::vector<boid>& boids, p6::Context& ctx){
+void displayBoidsNumber(std::vector<Boid>& boids, p6::Context& ctx){
     float margin = 0.05;
     p6::TopRightCorner textPos = {ctx.aspect_ratio() - margin, 1 - margin};
     std::u16string text = uint_to_u16string(boids.size());
