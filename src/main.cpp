@@ -1,9 +1,9 @@
-#include <cstdlib>
 #include "p6/p6.h"
+#include "boids.h"
+#include <cstdlib>
+#include <iostream>
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
-#include "boids.h"
-#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -18,23 +18,22 @@ int main(int argc, char* argv[])
         }
     }
 
-    std::vector<Boid> boids;
-
-    // Generate environment
+    // Generate environment and boids array
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
-    World world(ctx);
+    std::vector<Boid> boids;
+    World world(ctx, boids);
 
     // Initialize a number of boids
     size_t boidNumbers = 50;
 
     // Get list of names from file
-    std::vector<std::string> namesList = getNamesList();
+    //std::vector<std::string> namesList = getNamesList();
 
     // Create as many boids as intended
-    for (unsigned int i = 0; i < boidNumbers; i++){
+    /*for (unsigned int i = 0; i < boidNumbers; i++){
         Boid singleBoid(world, i, namesList);
         boids.push_back(singleBoid);
-    }
+    }*/
 
     // Start the update loop
     ctx.update = [&]() {
@@ -46,11 +45,11 @@ int main(int argc, char* argv[])
             boids[i].draw();
         }
 
-        // Show a simple window
+        // Display ImGui controls
         world.displayControls();
 
         if (ctx.mouse_button_is_pressed(static_cast<p6::Button>(GLFW_MOUSE_BUTTON_LEFT)) && !ImGui::GetIO().WantCaptureMouse){
-            addBoid(world, boids, ctx.mouse(), namesList);
+            addBoid(world, boids, ctx.mouse());
         }
 
         displayBoidsNumber(boids, ctx);

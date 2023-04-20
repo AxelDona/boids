@@ -1,16 +1,15 @@
+#ifndef SIMPLE_P6_SETUP_BOIDS_H
+#define SIMPLE_P6_SETUP_BOIDS_H
+
 #pragma once
 #include "p6/p6.h"
 #include "world.h"
 #include <cstdlib>
 #include <cmath>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <random>
-
-#ifndef SIMPLE_P6_SETUP_BOIDS_H
-#define SIMPLE_P6_SETUP_BOIDS_H
 
 class Boid {
 
@@ -35,12 +34,10 @@ private :
     float                   m_baseWidth         = 0.025;
     float                   m_height            = 0.035;
 
-    float                   m_secureArea        = m_baseWidth * m_height * 2;
-
     p6::Color               m_color             = {1.0f, 0.0f, 0.4f};
 
-    float                   m_detectionRadius   = std::fmax(m_height, m_baseWidth) * m_detectionFactor;
-    float                   m_avoidanceRadius   = std::fmax(m_height, m_baseWidth) * m_avoidanceFactor;
+    float                   m_detectionRadius   = std::fmax(m_height, m_baseWidth);
+    float                   m_avoidanceRadius   = std::fmax(m_height, m_baseWidth);
     float                   m_detectionFactor   = 2.0;
     float                   m_avoidanceFactor   = 1.5;
     float                   m_separationFactor  = 0.3;
@@ -57,7 +54,7 @@ public:
     // ---------- CONSTRUCTORS
 
     // Random position Boid constructor
-    Boid(World& world, unsigned int boidId, std::vector<std::string> &namesList): m_world(world), m_id(boidId), m_name(namesList[m_id]), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(m_world.m_worldSpeedFactor), m_baseWidth(m_world.m_worldBase), m_height(m_world.m_worldHeight), m_detectionFactor(m_world.m_worldDetectionFactor), m_avoidanceFactor(m_world.m_worldAvoidanceFactor){
+    Boid(World& world, unsigned int boidId): m_id(boidId), m_name(world.m_namesList[m_id]), m_world(world), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(m_world.m_worldSpeedFactor), m_baseWidth(m_world.m_worldBase), m_height(m_world.m_worldHeight), m_detectionFactor(m_world.m_worldDetectionFactor), m_avoidanceFactor(m_world.m_worldAvoidanceFactor){
         m_detectionRadius   = std::fmax(m_height, m_baseWidth) * m_detectionFactor;
         m_avoidanceRadius   = std::fmax(m_height, m_baseWidth) * m_avoidanceFactor;
         m_position = glm::vec2(p6::random::number(-m_world.m_context.aspect_ratio() + m_world.m_windowMargin, m_world.m_context.aspect_ratio() - m_world.m_windowMargin), p6::random::number(-1 + m_world.m_windowMargin, 1 - m_world.m_windowMargin));
@@ -65,7 +62,7 @@ public:
     }
 
     // Defined position Boid constructor
-    Boid(World& world, glm::vec2 position, unsigned int boidId, std::vector<std::string> &namesList): m_world(world), m_id(boidId), m_name(namesList[m_id]), m_position(position), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(m_world.m_worldSpeedFactor), m_baseWidth(m_world.m_worldBase), m_height(m_world.m_worldHeight), m_detectionFactor(m_world.m_worldDetectionFactor), m_avoidanceFactor(m_world.m_worldAvoidanceFactor){
+    Boid(World& world, glm::vec2 position, unsigned int boidId): m_id(boidId), m_name(world.m_namesList[m_id]), m_world(world), m_position(position), m_speed(p6::random::number(-1,1), p6::random::number(-1, 1)), m_speedFactor(m_world.m_worldSpeedFactor), m_baseWidth(m_world.m_worldBase), m_height(m_world.m_worldHeight), m_detectionFactor(m_world.m_worldDetectionFactor), m_avoidanceFactor(m_world.m_worldAvoidanceFactor){
         m_detectionRadius   = std::fmax(m_height, m_baseWidth) * m_detectionFactor;
         m_avoidanceRadius   = std::fmax(m_height, m_baseWidth) * m_avoidanceFactor;
         setTriangleVertices();
@@ -122,10 +119,8 @@ public:
 std::u16string uint_to_u16string(unsigned int const &value);
 std::u16string utf8_to_utf16(std::string const& utf8);
 
-void addBoid(World& world, std::vector<Boid>& boids, glm::vec2 startPos, std::vector<std::string> &namesList);
+void addBoid(World& world, std::vector<Boid>& boids, glm::vec2 startPos);
 
 void displayBoidsNumber(std::vector<Boid>& boids, p6::Context& ctx);
-
-std::vector<std::string> getNamesList();
 
 #endif // SIMPLE_P6_SETUP_BOIDS_H

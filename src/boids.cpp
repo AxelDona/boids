@@ -95,7 +95,7 @@ void Boid::followPoint(glm::vec2 position, float followRadius, float followFacto
 
 void Boid::drawEdgeProjection(){
     float circleRadius = 0.5;
-    float boundaryAlertCircleOffset = circleRadius - 0.02;
+    float boundaryAlertCircleOffset = circleRadius - 0.02f;
     m_world.m_context.use_stroke = false;
     m_world.m_context.use_fill = true;
     m_world.m_context.fill = m_color;
@@ -214,11 +214,12 @@ void Boid::boidMovement(){
         alignement();
         cohesion();
     }
-    if (m_world.m_isPointerRepellingBoids){
-        avoidPoint(m_world.m_context.mouse(), m_world.m_pointerAvoidanceRadius, 4.0);
-    }
-    if (m_world.m_isPointerAttractingBoids){
-        followPoint(m_world.m_context.mouse(), m_world.m_pointerAvoidanceRadius, 2.0);
+    if (m_world.m_pointerInteraction){
+        if (m_world.m_pointerInteractionMode == 0){
+            avoidPoint(m_world.m_context.mouse(), m_world.m_pointerAvoidanceRadius, 4.0);
+        } else if (m_world.m_pointerInteractionMode == 1){
+            followPoint(m_world.m_context.mouse(), m_world.m_pointerAvoidanceRadius, 2.0);
+            }
     }
     avoidBoundaries();
     speedLimits();
@@ -273,11 +274,11 @@ void Boid::draw(){
 
     // Get color for next frame
     if (!m_closeNeighbors.empty()){
-        m_color = {0.7f, 0.6f, 0.1f};
+        m_color = m_world.m_tooCloseColor;
     } else if (!m_neighbors.empty()){
-        m_color = {0.1f, 0.7f, 0.8f};
+        m_color = m_world.m_followColor;
     } else  {
-        m_color = {1.0f, 0.0f, 0.4f};
+        m_color = m_world.m_loneColor;
     }
 
     // Reset array of neighbors
@@ -293,15 +294,15 @@ std::u16string uint_to_u16string(unsigned int const &value) {
 std::u16string utf8_to_utf16(std::string const& utf8) {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff,
                                                  std::codecvt_mode::little_endian>, char16_t> cnv;
-    std::u16string s = cnv.from_bytes(utf8);
+    std::u16string output = cnv.from_bytes(utf8);
     if (cnv.converted() < utf8.size()) {
         throw std::runtime_error("incomplete conversion");
     }
-    return s;
+    return output;
 }
 
-void addBoid(World& world, std::vector<Boid>& boids, glm::vec2 startPos, std::vector<std::string> &namesList){
-    Boid singularBoid(world, startPos, boids.size(), namesList);
+void addBoid(World& world, std::vector<Boid>& boids, glm::vec2 startPos){
+    Boid singularBoid(world, startPos, boids.size());
     boids.push_back(singularBoid);
 }
 
@@ -313,27 +314,5 @@ void displayBoidsNumber(std::vector<Boid>& boids, p6::Context& ctx){
     ctx.text_inflating = 0.02f;
     ctx.text_size = 0.03f;
     ctx.text(text, textPos);
-}
-
-std::vector<std::string> getNamesList(){
-    std::ifstream file("names.txt");
-    std::vector<std::string> lines;
-
-    if (file.is_open()) {
-        std::string line;
-        while (std::getline(file, line)) {
-            lines.push_back(line);
-        }
-        file.close();
-    } else {
-        std::cerr << "Failed to open file\n" << std::endl;
-    }
-
-    // Randomize the names order
-    auto random = std::random_device {};
-    auto rng = std::default_random_engine { random() };
-    std::shuffle(std::begin(lines), std::end(lines), rng);
-
-    return lines;
 }
 
