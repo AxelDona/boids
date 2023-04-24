@@ -199,6 +199,8 @@ void Boid::drawProximityAlert() {
 
 // Draw the detection area of the Boid
 void Boid::drawDetectionCircle() {
+    m_scene.m_context.use_stroke    = true;
+    m_scene.m_context.use_fill      = false;
     m_scene.m_context.stroke_weight = 0.0027f;
     m_scene.m_context.stroke        = {0.1f, 0.5f, 0.1f, 0.7f};
     m_scene.m_context.circle(
@@ -208,6 +210,8 @@ void Boid::drawDetectionCircle() {
 }
 
 void Boid::drawAvoidanceCircle() {
+    m_scene.m_context.use_stroke    = true;
+    m_scene.m_context.use_fill      = false;
     m_scene.m_context.stroke_weight = 0.0027f;
     m_scene.m_context.stroke        = {0.5f, 0.1f, 0.1f, 0.7f};
     m_scene.m_context.circle(
@@ -216,13 +220,17 @@ void Boid::drawAvoidanceCircle() {
     );
 }
 
-void Boid::drawNeighborDistance() {
+void Boid::drawNeighborRelations() {
     if (m_neighbors.empty()) {
         return;
     }
     for (auto& m_neighbor : m_neighbors) {
         m_scene.m_context.stroke_weight = 0.0005f;
-        m_scene.m_context.stroke        = {1.0f, 1.0f, 1.0f, 0.5f};
+        if (m_scene.m_currentSkin.m_isMonochrome) {
+            m_scene.m_context.stroke = m_scene.m_currentSkin.m_sceneSecondaryColor;
+        } else {
+            m_scene.m_context.stroke = {1.0f, 1.0f, 1.0f, 0.5f};
+        }
         m_scene.m_context.line(
             m_position,
             m_neighbor.m_position
@@ -317,8 +325,8 @@ void Boid::pingBoid() {
         if (glm::distance(m_position, linePos) < m_baseWidth / 2) {
             if (m_pinged == 0) {
                 savePosition();
+                m_pinged = m_scene.m_pingDuration;
             }
-            m_pinged = m_scene.m_pingDuration;
         } else {
             if (m_pinged > 0 && glm::distance(m_position, linePos) > m_baseWidth * 4) {
                 m_pinged--;
@@ -349,7 +357,7 @@ void Boid::draw() {
     }
 
     if (m_scene.m_isDistanceToNeighborDisplayed) {
-        drawNeighborDistance();
+        drawNeighborRelations();
     }
 
     // Write ID

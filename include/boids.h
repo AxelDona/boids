@@ -115,7 +115,7 @@ public:
 
     void drawAvoidanceCircle();
 
-    void drawNeighborDistance();
+    void drawNeighborRelations();
 
     // Move the Boid according to its parameters
     void updatePosition();
