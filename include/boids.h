@@ -129,8 +129,6 @@ public:
     // Draw a Boid
     void draw();
 
-    /*void createShapeMask(p6::Color color);*/
-
     void clearNeighborArrays();
 };
 
