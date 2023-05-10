@@ -1,4 +1,4 @@
-#include "boids.h"
+#include "boid.h"
 #include <cmath>
 
 // ---------- METHODS

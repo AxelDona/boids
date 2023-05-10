@@ -1,5 +1,5 @@
-#ifndef SIMPLE_P6_SETUP_BOIDS_H
-#define SIMPLE_P6_SETUP_BOIDS_H
+#ifndef SIMPLE_P6_SETUP_BOID_H
+#define SIMPLE_P6_SETUP_BOID_H
 
 #pragma once
 #include <algorithm>
@@ -29,25 +29,25 @@ private:
 
     float m_speedFactor = 0.0005;
 
-    // Triangle shape
+    float     m_baseWidth = 0.025;
+    float     m_height    = 0.035;
     glm::vec2 m_triangleLeftPoint{};
     glm::vec2 m_triangleRightPoint{};
     glm::vec2 m_triangleTopPoint{};
-    float     m_baseWidth = 0.025;
-    float     m_height    = 0.035;
 
     p6::Color m_color = {1.0f, 0.0f, 0.4f};
 
-    float             m_detectionRadius  = std::fmax(m_height, m_baseWidth);
-    float             m_avoidanceRadius  = std::fmax(m_height, m_baseWidth);
-    float             m_detectionFactor  = 2.0;
-    float             m_avoidanceFactor  = 1.5;
-    float             m_separationFactor = 0.3;
-    float             m_alignmentFactor  = 0.015;
-    float             m_cohesionFactor   = 0.002;
-    float             m_turnSpeedDefault = 0.15;
-    glm::vec2         m_turnSpeed        = {m_turnSpeedDefault, m_turnSpeedDefault};
-    float             m_turnFactor       = 0.15;
+    float     m_detectionRadius  = std::fmax(m_height, m_baseWidth);
+    float     m_avoidanceRadius  = std::fmax(m_height, m_baseWidth);
+    float     m_detectionFactor  = 2.0;
+    float     m_avoidanceFactor  = 1.5;
+    float     m_separationFactor = 0.3;
+    float     m_alignmentFactor  = 0.015;
+    float     m_cohesionFactor   = 0.002;
+    float     m_turnSpeedDefault = 0.15;
+    glm::vec2 m_turnSpeed        = {m_turnSpeedDefault, m_turnSpeedDefault};
+    float     m_turnFactor       = 0.15;
+
     std::vector<Boid> m_neighbors;
     std::vector<Boid> m_closeNeighbors;
 
@@ -55,8 +55,6 @@ private:
     glm::vec2    m_pingedPosition{};
 
 public:
-    // ---------- CONSTRUCTORS
-
     // Random position Boid constructor
     Boid(Scene& world, unsigned int boidId)
         : m_id(boidId), m_name(world.m_namesList[m_id]), m_scene(world), m_speed(p6::random::number(-1, 1), p6::random::number(-1, 1)), m_speedFactor(m_scene.m_globalBoidSpeedFactor), m_baseWidth(m_scene.m_globalBoidWidth), m_height(m_scene.m_globalBoidHeight), m_detectionFactor(m_scene.m_globalBoidDetectionRadiusFactor), m_avoidanceFactor(m_scene.m_globalBoidAvoidanceRadiusFactor), m_pingedPosition(m_position) {
@@ -74,8 +72,7 @@ public:
         setTriangleVertices();
     }
 
-    // ---------- METHODS
-
+private:
     // Check if there are neighbor boids around and store them in an array
     void updateNeighbors();
 
@@ -117,17 +114,15 @@ public:
 
     void drawNeighborRelations();
 
-    // Move the Boid according to its parameters
-    void updatePosition();
-
     void savePosition();
+
+    void updatePosition();
 
     void drawShape();
 
-    void pingBoid();
-
-    // Draw a Boid
     void draw();
+
+    void pingBoid();
 
     void clearNeighborArrays();
 };
@@ -137,4 +132,4 @@ std::u16string utf8_to_utf16(std::string const& utf8);
 
 void addBoid(Scene& world, std::vector<Boid>& boids, glm::vec2 startPos);
 
-#endif // SIMPLE_P6_SETUP_BOIDS_H
+#endif // SIMPLE_P6_SETUP_BOID_H

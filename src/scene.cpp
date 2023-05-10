@@ -1,7 +1,7 @@
 #include "scene.h"
 #include <cmath>
 #include <iostream>
-#include "boids.h"
+#include "boid.h"
 #include "skin.h"
 
 size_t Scene::getBoidsNumber() {
@@ -146,10 +146,6 @@ void Scene::updateCurrentSkin() {
     }
 }
 
-std::vector<Boid> Scene::saveBoids() {
-    return m_boids;
-}
-
 void Scene::draw() {
     updateCurrentSkin();
     if (m_currentSkin.m_isBackgroundFading) {
@@ -198,8 +194,6 @@ void Scene::draw() {
     if (m_isBoidsNumberDisplayed) {
         displayBoidsNumber();
     }
-
-    // m_boidsPreviousFrame = saveBoids();
 
     m_counter += 1;
 }

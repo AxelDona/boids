@@ -12,6 +12,8 @@ class Boid;
 class Skin;
 
 class Scene {
+    friend class Boid;
+
 private:
     p6::Context&             m_context;
     std::vector<Boid>&       m_boids;
@@ -54,8 +56,6 @@ private:
     p6::FullScreen m_screen = {};
 
 public:
-    friend class Boid;
-
     Scene(p6::Context& ctx, std::vector<Boid>& boids, std::vector<Skin>& skins)
         : m_context(ctx), m_boids(boids), m_boidsPreviousFrame(boids), m_skins(skins) {
         std::ifstream            file("names.txt");
@@ -92,13 +92,13 @@ public:
 
     void displayControls();
 
+    void draw();
+
+private:
+
     void displayBoidsNumber();
 
     void updateCurrentSkin();
-
-    std::vector<Boid> saveBoids();
-
-    void draw();
 };
 
 #endif // SIMPLE_P6_SETUP_SCENE_H

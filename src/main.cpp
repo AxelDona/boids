@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include "boids.h"
+#include "boid.h"
 #include "p6/p6.h"
 #include "skin.h"
 #define DOCTEST_CONFIG_IMPLEMENT

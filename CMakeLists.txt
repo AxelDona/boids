@@ -6,7 +6,7 @@ project(Simple-p6-Setup)
 
 # ---Declare source files---
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*)
-add_executable(${PROJECT_NAME} ${SOURCE_FILES} src/boids.cpp src/scene.cpp src/skin.cpp include/boids.h include/scene.h include/skin.h)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} src/boid.cpp src/scene.cpp src/skin.cpp include/boid.h include/scene.h include/skin.h)
 target_include_directories(${PROJECT_NAME} PRIVATE src include)
 # Copie le fichier names.txt dans le même dossier que l'exécutable
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
