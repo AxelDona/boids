@@ -128,15 +128,15 @@ void Scene::updateCurrentSkin() {
         m_globalSeparationFactor                         = 0.3;
         m_globalAlignmentFactor                          = 0.015;
         m_globalCohesionFactor                           = 0.002;
-        m_skinParameters.m_isIdDisplayed                 = m_currentSkin.m_isIdDisplayedByDefault;
-        m_skinParameters.m_isNameDisplayed               = m_currentSkin.m_isNameDisplayedByDefault;
-        m_skinParameters.m_isProximityAlertDisplayed     = m_currentSkin.m_isProximityAlertDisplayedByDefault;
-        m_skinParameters.m_isDetectionDisplayed          = m_currentSkin.m_isDetectionDisplayedByDefault;
-        m_skinParameters.m_isAvoidanceRadiusDisplayed    = m_currentSkin.m_isAvoidanceRadiusDisplayedByDefault;
-        m_skinParameters.m_isDistanceToNeighborDisplayed = m_currentSkin.m_isDistanceToNeighborDisplayedByDefault;
-        m_skinParameters.m_isEdgeReflectionDisplayed     = m_currentSkin.m_isEdgeReflectionDisplayedByDefault;
-        m_skinParameters.m_isBoidsNumberDisplayed        = m_currentSkin.m_isBoidsNumberDisplayedByDefault;
-        m_skinParameters.m_pointerInteraction            = m_currentSkin.m_isPointerInteractionEnabledByDefault;
+        m_skinParameters.m_isIdDisplayed                 = m_currentSkin.m_defaultDisplayParameters.m_isIdDisplayedByDefault;
+        m_skinParameters.m_isNameDisplayed               = m_currentSkin.m_defaultDisplayParameters.m_isNameDisplayedByDefault;
+        m_skinParameters.m_isProximityAlertDisplayed     = m_currentSkin.m_defaultDisplayParameters.m_isProximityAlertDisplayedByDefault;
+        m_skinParameters.m_isDetectionDisplayed          = m_currentSkin.m_defaultDisplayParameters.m_isDetectionDisplayedByDefault;
+        m_skinParameters.m_isAvoidanceRadiusDisplayed    = m_currentSkin.m_defaultDisplayParameters.m_isAvoidanceRadiusDisplayedByDefault;
+        m_skinParameters.m_isDistanceToNeighborDisplayed = m_currentSkin.m_defaultDisplayParameters.m_isDistanceToNeighborDisplayedByDefault;
+        m_skinParameters.m_isEdgeReflectionDisplayed     = m_currentSkin.m_defaultDisplayParameters.m_isEdgeReflectionDisplayedByDefault;
+        m_skinParameters.m_isBoidsNumberDisplayed        = m_currentSkin.m_defaultDisplayParameters.m_isBoidsNumberDisplayedByDefault;
+        m_skinParameters.m_pointerInteraction            = m_currentSkin.m_defaultDisplayParameters.m_isPointerInteractionEnabledByDefault;
         m_skinParameters.m_pointerInteractionMode        = 0;
 
         for (auto& m_boid : m_boids) {

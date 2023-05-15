@@ -8,6 +8,19 @@
 class Scene;
 class Boid;
 
+struct skinDefaultDisplayParameters {
+    bool m_isIdDisplayedByDefault                 = false;
+    bool m_isNameDisplayedByDefault               = false;
+    bool m_isProximityAlertDisplayedByDefault     = false;
+    bool m_isDetectionDisplayedByDefault          = false;
+    bool m_isAvoidanceRadiusDisplayedByDefault    = false;
+    bool m_isDistanceToNeighborDisplayedByDefault = false;
+    bool m_isEdgeReflectionDisplayedByDefault     = true;
+    bool m_isBoidsNumberDisplayedByDefault        = true;
+    bool m_isPointerInteractionEnabledByDefault   = false;
+    int  m_pointerInteractionModeByDefault        = 0;
+};
+
 class Skin {
 public:
     enum BoidShape { Triangle,
@@ -31,16 +44,7 @@ private:
     float m_defaultBoidWidth             = 0.025;
     float m_defaultDetectionRadiusFactor = 2.0f;
 
-    bool m_isIdDisplayedByDefault                 = false;
-    bool m_isNameDisplayedByDefault               = false;
-    bool m_isProximityAlertDisplayedByDefault     = false;
-    bool m_isDetectionDisplayedByDefault          = false;
-    bool m_isAvoidanceRadiusDisplayedByDefault    = false;
-    bool m_isDistanceToNeighborDisplayedByDefault = false;
-    bool m_isEdgeReflectionDisplayedByDefault     = true;
-    bool m_isBoidsNumberDisplayedByDefault        = true;
-    bool m_isPointerInteractionEnabledByDefault   = false;
-    int  m_pointerInteractionModeByDefault        = 0;
+    skinDefaultDisplayParameters m_defaultDisplayParameters;
 
     bool                m_isMonochrome                     = false;
     bool                m_usesRadarLayout                  = false;
@@ -63,16 +67,16 @@ public:
     Skin() = default;
 
     // Monochrome skin constructor
-    Skin(const char* name, float defaultBoidSpeedFactor, float defaultBoidWidth, float defaultDetectionRadiusFactor, bool isIdDisplayedByDefault, bool isNameDisplayedByDefault, bool isProximityAlertDisplayedByDefault, bool isDetectionDisplayedByDefault, bool isAvoidanceRadiusDisplayedByDefault, bool isDistanceToNeighborDisplayedByDefault, bool isEdgeReflectionDisplayedByDefault, bool isBoidsNumberDisplayedByDefault, bool isPointerInteractionEnabledByDefault, int pointerInteractionModeByDefault, bool isMonochrome, bool usesRadarLayout, BoidShape boidShape, BoidPositionRefresh boidPositionRefresh, bool areDistanceDisplayOptionsEnabled, bool areBoidNameOptionsEnabled, bool isEdgeReflectionOptionEnabled, bool isProximityAlertOptionEnabled, bool isBackgroundFading, p6::Color sceneMainColor, p6::Color sceneSecondaryColor, p6::Color sceneBackgroundColor)
-        : m_name(name), m_defaultBoidSpeedFactor(defaultBoidSpeedFactor), m_defaultBoidWidth(defaultBoidWidth), m_defaultDetectionRadiusFactor(defaultDetectionRadiusFactor), m_isIdDisplayedByDefault(isIdDisplayedByDefault), m_isNameDisplayedByDefault(isNameDisplayedByDefault), m_isProximityAlertDisplayedByDefault(isProximityAlertDisplayedByDefault), m_isDetectionDisplayedByDefault(isDetectionDisplayedByDefault), m_isAvoidanceRadiusDisplayedByDefault(isAvoidanceRadiusDisplayedByDefault), m_isDistanceToNeighborDisplayedByDefault(isDistanceToNeighborDisplayedByDefault), m_isEdgeReflectionDisplayedByDefault(isEdgeReflectionDisplayedByDefault), m_isBoidsNumberDisplayedByDefault(isBoidsNumberDisplayedByDefault), m_isPointerInteractionEnabledByDefault(isPointerInteractionEnabledByDefault), m_pointerInteractionModeByDefault(pointerInteractionModeByDefault), m_isMonochrome(isMonochrome), m_usesRadarLayout(usesRadarLayout), m_boidShape(boidShape), m_boidPositionRefresh(boidPositionRefresh), m_areDistanceDisplayOptionsEnabled(areDistanceDisplayOptionsEnabled), m_areBoidNameOptionsEnabled(areBoidNameOptionsEnabled), m_isEdgeReflectionOptionEnabled(isEdgeReflectionOptionEnabled), m_isProximityAlertOptionEnabled(isProximityAlertOptionEnabled), m_isBackgroundFading(isBackgroundFading), m_sceneMainColor(sceneMainColor), m_sceneSecondaryColor(sceneSecondaryColor), m_sceneBackgroundColor(sceneBackgroundColor) {
+    Skin(const char* name, float defaultBoidSpeedFactor, float defaultBoidWidth, float defaultDetectionRadiusFactor, skinDefaultDisplayParameters defaultDisplayParameters, bool isMonochrome, bool usesRadarLayout, BoidShape boidShape, BoidPositionRefresh boidPositionRefresh, bool areDistanceDisplayOptionsEnabled, bool areBoidNameOptionsEnabled, bool isEdgeReflectionOptionEnabled, bool isProximityAlertOptionEnabled, bool isBackgroundFading, p6::Color sceneMainColor, p6::Color sceneSecondaryColor, p6::Color sceneBackgroundColor)
+        : m_name(name), m_defaultBoidSpeedFactor(defaultBoidSpeedFactor), m_defaultBoidWidth(defaultBoidWidth), m_defaultDetectionRadiusFactor(defaultDetectionRadiusFactor), m_defaultDisplayParameters(defaultDisplayParameters), m_isMonochrome(isMonochrome), m_usesRadarLayout(usesRadarLayout), m_boidShape(boidShape), m_boidPositionRefresh(boidPositionRefresh), m_areDistanceDisplayOptionsEnabled(areDistanceDisplayOptionsEnabled), m_areBoidNameOptionsEnabled(areBoidNameOptionsEnabled), m_isEdgeReflectionOptionEnabled(isEdgeReflectionOptionEnabled), m_isProximityAlertOptionEnabled(isProximityAlertOptionEnabled), m_isBackgroundFading(isBackgroundFading), m_sceneMainColor(sceneMainColor), m_sceneSecondaryColor(sceneSecondaryColor), m_sceneBackgroundColor(sceneBackgroundColor) {
         if (m_isMonochrome) {
             m_loneBoidColor = m_followingBoidColor = m_tooCloseBoidColor = m_sceneMainColor;
         }
     }
 
     // Colored skin constructor
-    Skin(const char* name, float defaultBoidSpeedFactor, float defaultBoidWidth, float defaultDetectionRadiusFactor, bool isIdDisplayedByDefault, bool isNameDisplayedByDefault, bool isProximityAlertDisplayedByDefault, bool isDetectionDisplayedByDefault, bool isAvoidanceRadiusDisplayedByDefault, bool isDistanceToNeighborDisplayedByDefault, bool isEdgeReflectionDisplayedByDefault, bool isBoidsNumberDisplayedByDefault, bool isPointerInteractionEnabledByDefault, int pointerInteractionModeByDefault, bool isMonochrome, bool usesRadarLayout, BoidShape boidShape, BoidPositionRefresh boidPositionRefresh, bool areDistanceDisplayOptionsDisabled, bool areBoidNameOptionsEnabled, bool isEdgeReflectionOptionEnabled, bool isProximityAlertOptionEnabled, bool isBackgroundFading, p6::Color loneBoidColor, p6::Color followingBoidColor, p6::Color tooCloseBoidColor, p6::Color sceneMainColor, p6::Color sceneSecondaryColor, p6::Color sceneBackgroundColor)
-        : m_name(name), m_defaultBoidSpeedFactor(defaultBoidSpeedFactor), m_defaultBoidWidth(defaultBoidWidth), m_defaultDetectionRadiusFactor(defaultDetectionRadiusFactor), m_isIdDisplayedByDefault(isIdDisplayedByDefault), m_isNameDisplayedByDefault(isNameDisplayedByDefault), m_isProximityAlertDisplayedByDefault(isProximityAlertDisplayedByDefault), m_isDetectionDisplayedByDefault(isDetectionDisplayedByDefault), m_isAvoidanceRadiusDisplayedByDefault(isAvoidanceRadiusDisplayedByDefault), m_isDistanceToNeighborDisplayedByDefault(isDistanceToNeighborDisplayedByDefault), m_isEdgeReflectionDisplayedByDefault(isEdgeReflectionDisplayedByDefault), m_isBoidsNumberDisplayedByDefault(isBoidsNumberDisplayedByDefault), m_isPointerInteractionEnabledByDefault(isPointerInteractionEnabledByDefault), m_pointerInteractionModeByDefault(pointerInteractionModeByDefault), m_isMonochrome(isMonochrome), m_usesRadarLayout(usesRadarLayout), m_boidShape(boidShape), m_boidPositionRefresh(boidPositionRefresh), m_areDistanceDisplayOptionsEnabled(areDistanceDisplayOptionsDisabled), m_areBoidNameOptionsEnabled(areBoidNameOptionsEnabled), m_isEdgeReflectionOptionEnabled(isEdgeReflectionOptionEnabled), m_isProximityAlertOptionEnabled(isProximityAlertOptionEnabled), m_isBackgroundFading(isBackgroundFading), m_loneBoidColor(loneBoidColor), m_followingBoidColor(followingBoidColor), m_tooCloseBoidColor(tooCloseBoidColor), m_sceneMainColor(sceneMainColor), m_sceneSecondaryColor(sceneSecondaryColor), m_sceneBackgroundColor(sceneBackgroundColor) {
+    Skin(const char* name, float defaultBoidSpeedFactor, float defaultBoidWidth, float defaultDetectionRadiusFactor, skinDefaultDisplayParameters defaultDisplayParameters, bool isMonochrome, bool usesRadarLayout, BoidShape boidShape, BoidPositionRefresh boidPositionRefresh, bool areDistanceDisplayOptionsDisabled, bool areBoidNameOptionsEnabled, bool isEdgeReflectionOptionEnabled, bool isProximityAlertOptionEnabled, bool isBackgroundFading, p6::Color loneBoidColor, p6::Color followingBoidColor, p6::Color tooCloseBoidColor, p6::Color sceneMainColor, p6::Color sceneSecondaryColor, p6::Color sceneBackgroundColor)
+        : m_name(name), m_defaultBoidSpeedFactor(defaultBoidSpeedFactor), m_defaultBoidWidth(defaultBoidWidth), m_defaultDetectionRadiusFactor(defaultDetectionRadiusFactor), m_defaultDisplayParameters(defaultDisplayParameters), m_isMonochrome(isMonochrome), m_usesRadarLayout(usesRadarLayout), m_boidShape(boidShape), m_boidPositionRefresh(boidPositionRefresh), m_areDistanceDisplayOptionsEnabled(areDistanceDisplayOptionsDisabled), m_areBoidNameOptionsEnabled(areBoidNameOptionsEnabled), m_isEdgeReflectionOptionEnabled(isEdgeReflectionOptionEnabled), m_isProximityAlertOptionEnabled(isProximityAlertOptionEnabled), m_isBackgroundFading(isBackgroundFading), m_loneBoidColor(loneBoidColor), m_followingBoidColor(followingBoidColor), m_tooCloseBoidColor(tooCloseBoidColor), m_sceneMainColor(sceneMainColor), m_sceneSecondaryColor(sceneSecondaryColor), m_sceneBackgroundColor(sceneBackgroundColor) {
         if (m_isMonochrome) {
             m_loneBoidColor = m_followingBoidColor = m_tooCloseBoidColor = m_sceneMainColor;
         }
