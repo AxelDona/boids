@@ -74,10 +74,10 @@ void Scene::displayControls() {
     ImGui::SliderFloat("Alignment", &m_globalAlignmentFactor, 0.0, 0.1);
     ImGui::SliderFloat("Cohesion", &m_globalCohesionFactor, 0.0, 0.01);
     ImGui::Separator();
-    ImGui::Checkbox("Pointer interaction", &m_pointerInteraction);
-    if (m_pointerInteraction) {
-        ImGui::RadioButton("Pointer repels boids", &m_pointerInteractionMode, 0);
-        ImGui::RadioButton("Pointer attracts boids (not yet implemented)", &m_pointerInteractionMode, 1);
+    ImGui::Checkbox("Pointer interaction", &m_skinParameters.m_pointerInteraction);
+    if (m_skinParameters.m_pointerInteraction) {
+        ImGui::RadioButton("Pointer repels boids", &m_skinParameters.m_pointerInteractionMode, 0);
+        ImGui::RadioButton("Pointer attracts boids (not yet implemented)", &m_skinParameters.m_pointerInteractionMode, 1);
     }
     ImGui::Separator();
     ImGui::Text("Boid sight");
@@ -85,21 +85,21 @@ void Scene::displayControls() {
     ImGui::SliderFloat("Avoidance radius", &m_globalBoidAvoidanceRadiusFactor, 1.0f, 5.0f);
     ImGui::Separator();
     ImGui::Text("Display options");
-    ImGui::Checkbox("Display boids count", &m_isBoidsNumberDisplayed);
+    ImGui::Checkbox("Display boids count", &m_skinParameters.m_isBoidsNumberDisplayed);
     if (m_currentSkin.m_areDistanceDisplayOptionsEnabled) {
-        ImGui::Checkbox("Display detection circle", &m_isDetectionDisplayed);
-        ImGui::Checkbox("Display collision circle", &m_isAvoidanceRadiusDisplayed);
-        ImGui::Checkbox("Display relations", &m_isDistanceToNeighborDisplayed);
+        ImGui::Checkbox("Display detection circle", &m_skinParameters.m_isDetectionDisplayed);
+        ImGui::Checkbox("Display collision circle", &m_skinParameters.m_isAvoidanceRadiusDisplayed);
+        ImGui::Checkbox("Display relations", &m_skinParameters.m_isDistanceToNeighborDisplayed);
     }
-    ImGui::Checkbox("Display ID", &m_isIdDisplayed);
+    ImGui::Checkbox("Display ID", &m_skinParameters.m_isIdDisplayed);
     if (m_currentSkin.m_areBoidNameOptionsEnabled) {
-        ImGui::Checkbox("Display name", &m_isNameDisplayed);
+        ImGui::Checkbox("Display name", &m_skinParameters.m_isNameDisplayed);
     }
     if (m_currentSkin.m_isEdgeReflectionOptionEnabled) {
-        ImGui::Checkbox("Display edge reflection", &m_isEdgeReflectionDisplayed);
+        ImGui::Checkbox("Display edge reflection", &m_skinParameters.m_isEdgeReflectionDisplayed);
     }
     if (m_currentSkin.m_isProximityAlertOptionEnabled) {
-        ImGui::Checkbox("Draw proximity alert", &m_isProximityAlertDisplayed);
+        ImGui::Checkbox("Draw proximity alert", &m_skinParameters.m_isProximityAlertDisplayed);
     }
     ImGui::End();
 }
@@ -120,24 +120,24 @@ void Scene::displayBoidsNumber() {
 
 void Scene::updateCurrentSkin() {
     if (m_currentSkin.m_id != m_currentSkinID) {
-        m_currentSkin                     = m_skins[m_currentSkinID];
-        m_globalBoidSpeedFactor           = m_currentSkin.m_defaultBoidSpeedFactor;
-        m_globalBoidWidth                 = m_currentSkin.m_defaultBoidWidth;
-        m_globalBoidDetectionRadiusFactor = m_currentSkin.m_defaultDetectionRadiusFactor;
-        m_globalBoidAvoidanceRadiusFactor = 1.5f;
-        m_globalSeparationFactor          = 0.3;
-        m_globalAlignmentFactor           = 0.015;
-        m_globalCohesionFactor            = 0.002;
-        m_isIdDisplayed                   = m_currentSkin.m_isIdDisplayedByDefault;
-        m_isNameDisplayed                 = m_currentSkin.m_isNameDisplayedByDefault;
-        m_isProximityAlertDisplayed       = m_currentSkin.m_isProximityAlertDisplayedByDefault;
-        m_isDetectionDisplayed            = m_currentSkin.m_isDetectionDisplayedByDefault;
-        m_isAvoidanceRadiusDisplayed      = m_currentSkin.m_isAvoidanceRadiusDisplayedByDefault;
-        m_isDistanceToNeighborDisplayed   = m_currentSkin.m_isDistanceToNeighborDisplayedByDefault;
-        m_isEdgeReflectionDisplayed       = m_currentSkin.m_isEdgeReflectionDisplayedByDefault;
-        m_isBoidsNumberDisplayed          = m_currentSkin.m_isBoidsNumberDisplayedByDefault;
-        m_pointerInteraction              = m_currentSkin.m_isPointerInteractionEnabledByDefault;
-        m_pointerInteractionMode          = 0;
+        m_currentSkin                                    = m_skins[m_currentSkinID];
+        m_globalBoidSpeedFactor                          = m_currentSkin.m_defaultBoidSpeedFactor;
+        m_globalBoidWidth                                = m_currentSkin.m_defaultBoidWidth;
+        m_globalBoidDetectionRadiusFactor                = m_currentSkin.m_defaultDetectionRadiusFactor;
+        m_globalBoidAvoidanceRadiusFactor                = 1.5f;
+        m_globalSeparationFactor                         = 0.3;
+        m_globalAlignmentFactor                          = 0.015;
+        m_globalCohesionFactor                           = 0.002;
+        m_skinParameters.m_isIdDisplayed                 = m_currentSkin.m_isIdDisplayedByDefault;
+        m_skinParameters.m_isNameDisplayed               = m_currentSkin.m_isNameDisplayedByDefault;
+        m_skinParameters.m_isProximityAlertDisplayed     = m_currentSkin.m_isProximityAlertDisplayedByDefault;
+        m_skinParameters.m_isDetectionDisplayed          = m_currentSkin.m_isDetectionDisplayedByDefault;
+        m_skinParameters.m_isAvoidanceRadiusDisplayed    = m_currentSkin.m_isAvoidanceRadiusDisplayedByDefault;
+        m_skinParameters.m_isDistanceToNeighborDisplayed = m_currentSkin.m_isDistanceToNeighborDisplayedByDefault;
+        m_skinParameters.m_isEdgeReflectionDisplayed     = m_currentSkin.m_isEdgeReflectionDisplayedByDefault;
+        m_skinParameters.m_isBoidsNumberDisplayed        = m_currentSkin.m_isBoidsNumberDisplayedByDefault;
+        m_skinParameters.m_pointerInteraction            = m_currentSkin.m_isPointerInteractionEnabledByDefault;
+        m_skinParameters.m_pointerInteractionMode        = 0;
 
         for (auto& m_boid : m_boids) {
             m_boid.m_pinged         = 0;
@@ -191,7 +191,7 @@ void Scene::draw() {
         m_boid.clearNeighborArrays();
     }
 
-    if (m_isBoidsNumberDisplayed) {
+    if (m_skinParameters.m_isBoidsNumberDisplayed) {
         displayBoidsNumber();
     }
 

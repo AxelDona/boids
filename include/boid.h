@@ -20,7 +20,7 @@ private:
     unsigned int m_id;
     std::string  m_name;
 
-    Scene& m_scene;
+    Scene& m_scene; // passé en paramètre
 
     glm::vec2 m_position = {0, 0};
     glm::vec2 m_speed{};
@@ -31,7 +31,7 @@ private:
 
     float     m_baseWidth = 0.025;
     float     m_height    = 0.035;
-    glm::vec2 m_triangleLeftPoint{};
+    glm::vec2 m_triangleLeftPoint{}; // TO DO : Pas stocké, calculé quand nécessaire
     glm::vec2 m_triangleRightPoint{};
     glm::vec2 m_triangleTopPoint{};
 

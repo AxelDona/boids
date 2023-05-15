@@ -246,10 +246,10 @@ void Boid::updatePosition() {
         cohesion();
     }
     if (!ImGui::GetIO().WantCaptureMouse) {
-        if (m_scene.m_pointerInteraction) {
-            if (m_scene.m_pointerInteractionMode == 0) {
+        if (m_scene.m_skinParameters.m_pointerInteraction) {
+            if (m_scene.m_skinParameters.m_pointerInteractionMode == 0) {
                 avoidPoint(m_scene.m_context.mouse(), m_scene.m_pointerAvoidanceRadius, 4.0);
-            } else if (m_scene.m_pointerInteractionMode == 1) {
+            } else if (m_scene.m_skinParameters.m_pointerInteractionMode == 1) {
                 followPoint(m_scene.m_context.mouse(), m_scene.m_pointerAvoidanceRadius, 2.0);
             }
         }
@@ -348,33 +348,33 @@ void Boid::draw() {
     drawShape();
 
     // Draw detection circle
-    if (m_scene.m_isDetectionDisplayed) {
+    if (m_scene.m_skinParameters.m_isDetectionDisplayed) {
         drawDetectionCircle();
     }
 
-    if (m_scene.m_isAvoidanceRadiusDisplayed) {
+    if (m_scene.m_skinParameters.m_isAvoidanceRadiusDisplayed) {
         drawAvoidanceCircle();
     }
 
-    if (m_scene.m_isDistanceToNeighborDisplayed) {
+    if (m_scene.m_skinParameters.m_isDistanceToNeighborDisplayed) {
         drawNeighborRelations();
     }
 
     // Write ID
-    if (m_scene.m_isIdDisplayed) {
+    if (m_scene.m_skinParameters.m_isIdDisplayed) {
         drawID();
     }
 
     // Write name
-    if (m_scene.m_isNameDisplayed) {
+    if (m_scene.m_skinParameters.m_isNameDisplayed) {
         drawName();
     }
 
-    if (!m_closeNeighbors.empty() && m_scene.m_isProximityAlertDisplayed) {
+    if (!m_closeNeighbors.empty() && m_scene.m_skinParameters.m_isProximityAlertDisplayed) {
         drawProximityAlert();
     }
 
-    if (m_scene.m_isEdgeReflectionDisplayed) {
+    if (m_scene.m_skinParameters.m_isEdgeReflectionDisplayed) {
         drawEdgeProjection();
     }
 }

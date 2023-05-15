@@ -11,6 +11,19 @@
 class Boid;
 class Skin;
 
+struct sceneSkinParameters {
+    bool m_isIdDisplayed                 = false;
+    bool m_isNameDisplayed               = false;
+    bool m_isProximityAlertDisplayed     = false;
+    bool m_isDetectionDisplayed          = false;
+    bool m_isAvoidanceRadiusDisplayed    = false;
+    bool m_isDistanceToNeighborDisplayed = false;
+    bool m_isEdgeReflectionDisplayed     = true;
+    bool m_isBoidsNumberDisplayed        = true;
+    bool m_pointerInteraction            = false;
+    int  m_pointerInteractionMode        = 0;
+};
+
 class Scene {
     friend class Boid;
 
@@ -39,16 +52,7 @@ private:
     float m_globalAlignmentFactor           = 0.015;
     float m_globalCohesionFactor            = 0.002;
 
-    bool m_isIdDisplayed                 = false;
-    bool m_isNameDisplayed               = false;
-    bool m_isProximityAlertDisplayed     = false;
-    bool m_isDetectionDisplayed          = false;
-    bool m_isAvoidanceRadiusDisplayed    = false;
-    bool m_isDistanceToNeighborDisplayed = false;
-    bool m_isEdgeReflectionDisplayed     = true;
-    bool m_isBoidsNumberDisplayed        = true;
-    bool m_pointerInteraction            = false;
-    int  m_pointerInteractionMode        = 0;
+    sceneSkinParameters m_skinParameters;
 
     float m_windowMargin           = 0.4;
     float m_pointerAvoidanceRadius = 0.2;
@@ -95,7 +99,6 @@ public:
     void draw();
 
 private:
-
     void displayBoidsNumber();
 
     void updateCurrentSkin();
