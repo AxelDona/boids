@@ -1,10 +1,10 @@
 #include "skin.h"
 
 std::vector<Skin> initSkins() {
-    skinDefaultDisplayParameters nodesDefaultDisplayParameters         = {false, false, false, false, false, true, true, true, false, 0};
-    skinDefaultDisplayParameters shootingStarsDefaultDisplayParameters = {false, false, false, false, false, false, true, true, false, 0};
-    skinDefaultDisplayParameters radarDefaultDisplayParameters         = {true, false, true, false, false, false, false, true, false, 0};
-    skinDefaultDisplayParameters sonarDefaultDisplayParameters         = {false, false, false, false, false, false, false, true, false, 0};
+    skinDefaultDisplayOptions nodesDefaultDisplayParameters         = {false, false, false, false, false, true, true, true, false, 0};
+    skinDefaultDisplayOptions shootingStarsDefaultDisplayParameters = {false, false, false, false, false, false, true, true, false, 0};
+    skinDefaultDisplayOptions radarDefaultDisplayParameters         = {true, false, true, false, false, false, false, true, false, 0};
+    skinDefaultDisplayOptions sonarDefaultDisplayParameters         = {false, false, false, false, false, false, false, true, false, 0};
 
     Skin              defaultSkin;
     Skin              nodes("Nodes", 0.015, 0.007, 5.0, nodesDefaultDisplayParameters, true, false, Skin::BoidShape::Dot, Skin::BoidPositionRefresh::RealTime, true, false, true, false, false, p6::Color{0.85f, 0.05f, 0.40f}, p6::Color{0.70f, 0.10f, 0.25f}, p6::Color{0.06f, 0.01f, 0.02f, 0.05f});

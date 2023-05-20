@@ -23,15 +23,6 @@ int main(int argc, char* argv[]) {
     std::vector<Skin> skins = initSkins();
     Scene             scene(ctx, boids, skins);
 
-    // Get list of names from file
-    // std::vector<std::string> namesList = getNamesList();
-
-    // Create as many boids as intended
-    /*for (unsigned int i = 0; i < boidNumbers; i++){
-        Boid singleBoid(scene, i, namesList);
-        boids.push_back(singleBoid);
-    }*/
-
     // Start the update loop
     ctx.update = [&]() {
         // Display ImGui controls

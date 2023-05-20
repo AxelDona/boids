@@ -30,7 +30,6 @@ class Scene {
 private:
     p6::Context&             m_context;
     std::vector<Boid>&       m_boids;
-    std::vector<Boid>&       m_boidsPreviousFrame;
     std::vector<std::string> m_namesList;
     unsigned int             m_boidsToSpawn = 50;
     int                      m_counter      = 0.0;
@@ -61,7 +60,7 @@ private:
 
 public:
     Scene(p6::Context& ctx, std::vector<Boid>& boids, std::vector<Skin>& skins)
-        : m_context(ctx), m_boids(boids), m_boidsPreviousFrame(boids), m_skins(skins) {
+        : m_context(ctx), m_boids(boids), m_skins(skins) {
         std::ifstream            file("names.txt");
         std::vector<std::string> lines;
 
